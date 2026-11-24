@@ -22,7 +22,7 @@
                   {% if product.featured_image != blank %}
                     {{ product.featured_image | image_url: width: 900 | image_tag: loading: 'lazy', class: 'fab-card-img', alt: product.title }}
                   {% elsif block.settings.fallback_asset != blank %}
-                    <img src="{{ block.settings.fallback_asset | asset_url }}" alt="{{ product.title | escape }}" class="fab-card-img" loading="lazy">
+                    <img src="{{ block.settings.fallback_asset | asset_url }}" width="900" height="675" alt="{{ product.title | escape }}" class="fab-card-img" loading="lazy">
                   {% endif %}
                 </div>
                 <div class="fab-card-body">
@@ -46,7 +46,7 @@
               <a href="{{ routes.all_products_collection_url }}" class="fab-product-card" {{ block.shopify_attributes }}>
                 <div class="fab-card-media">
                   {% if block.settings.fallback_asset != blank %}
-                    <img src="{{ block.settings.fallback_asset | asset_url }}" alt="{{ block.settings.fallback_title | escape }}" class="fab-card-img" loading="lazy">
+                    <img src="{{ block.settings.fallback_asset | asset_url }}" width="900" height="675" alt="{{ block.settings.fallback_title | escape }}" class="fab-card-img" loading="lazy">
                   {% endif %}
                 </div>
                 <div class="fab-card-body">

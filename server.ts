@@ -50,7 +50,7 @@ function buildZipBufferFromDirectory(dirPath: string): Buffer {
     localHeader.writeUInt16LE(0x0800, 6);
     localHeader.writeUInt16LE(0, 8);
     localHeader.writeUInt16LE(0, 10);
-    localHeader.writeUInt16LE(0, 12);
+    localHeader.writeUInt16LE(0x0021, 12);
     localHeader.writeUInt32LE(crc, 14);
     localHeader.writeUInt32LE(dataBytes.length, 18);
     localHeader.writeUInt32LE(dataBytes.length, 22);
@@ -67,7 +67,7 @@ function buildZipBufferFromDirectory(dirPath: string): Buffer {
     centralHeader.writeUInt16LE(0x0800, 8);
     centralHeader.writeUInt16LE(0, 10);
     centralHeader.writeUInt16LE(0, 12);
-    centralHeader.writeUInt16LE(0, 14);
+    centralHeader.writeUInt16LE(0x0021, 14);
     centralHeader.writeUInt32LE(crc, 16);
     centralHeader.writeUInt32LE(dataBytes.length, 20);
     centralHeader.writeUInt32LE(dataBytes.length, 24);
@@ -102,7 +102,7 @@ async function startServer() {
   const app = express();
   const port = Number(process.env.PORT) || 3000;
 
-  // Direct Shopify theme ZIP download endpoints (includes layout/theme.liquid, sections, templates, JPG images, and MP4 videos)
+  // Direct Shopify theme ZIP download endpoints (includes layout/theme.liquid, sections, templates, JPG images, and animated WebP reels)
   const serveThemeZip = (filename: string) => (_req: express.Request, res: express.Response) => {
     const shopifyDir = path.resolve(__dirname, 'shopify');
     if (!fs.existsSync(shopifyDir)) {

@@ -111,7 +111,7 @@
           "settings": {
             "custom_label": "Dr. Melaxin Eyephalt Eye Cream",
             "fallback_price": "$34.00",
-            "fallback_video_asset": "demo_eye_cream.mp4",
+            "fallback_reel_asset": "demo_eye_cream.webp",
             "fallback_poster_asset": "video_eye_cream.jpg"
           }
         },
@@ -120,7 +120,7 @@
           "settings": {
             "custom_label": "Turmeric Acid Cleaning Pads",
             "fallback_price": "$26.00",
-            "fallback_video_asset": "demo_turmeric_pads.mp4",
+            "fallback_reel_asset": "demo_turmeric_pads.webp",
             "fallback_poster_asset": "video_turmeric_pads.jpg"
           }
         },
@@ -129,7 +129,7 @@
           "settings": {
             "custom_label": "Dr. Melaxin Peel Shot Kojic Acid Spray",
             "fallback_price": "$38.00",
-            "fallback_video_asset": "demo_peel_spray.mp4",
+            "fallback_reel_asset": "demo_peel_spray.webp",
             "fallback_poster_asset": "video_peel_spray.jpg"
           }
         },
@@ -138,7 +138,7 @@
           "settings": {
             "custom_label": "Anti Snore Mouth-Piece",
             "fallback_price": "$29.00",
-            "fallback_video_asset": "demo_sleep_mouthpiece.mp4",
+            "fallback_reel_asset": "demo_sleep_mouthpiece.webp",
             "fallback_poster_asset": "video_sleep_mouthpiece.jpg"
           }
         }

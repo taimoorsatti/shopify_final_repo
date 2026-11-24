@@ -15,7 +15,7 @@
           {% if product.featured_image != blank %}
             {{ product.featured_image | image_url: width: 1200 | image_tag: class: 'fp-main-img', id: 'fpMainImg', alt: product.title }}
           {% else %}
-            <img src="{{ 'product_eye_cream.jpg' | asset_url }}" id="fpMainImg" alt="{{ product.title | escape }}" class="fp-main-img">
+            <img src="{{ 'product_eye_cream.jpg' | asset_url }}" width="900" height="900" id="fpMainImg" alt="{{ product.title | escape }}" class="fp-main-img">
           {% endif %}
         </div>
         {% if product.images.size > 1 %}
@@ -101,12 +101,12 @@
         {% if section.settings.before_image != blank %}
           {{ section.settings.before_image | image_url: width: 900 | image_tag: class: 'fp-ba-img', alt: 'Before' }}
         {% else %}
-          <img src="{{ 'product_eye_cream.jpg' | asset_url }}" alt="Product Prep" class="fp-ba-img">
+          <img src="{{ 'product_eye_cream.jpg' | asset_url }}" width="800" height="600" alt="Product Prep" class="fp-ba-img">
         {% endif %}
         {% if section.settings.after_image != blank %}
           {{ section.settings.after_image | image_url: width: 900 | image_tag: class: 'fp-ba-img', alt: 'After' }}
         {% else %}
-          <img src="{{ 'editorial_eye_ritual.jpg' | asset_url }}" alt="In Routine" class="fp-ba-img">
+          <img src="{{ 'editorial_eye_ritual.jpg' | asset_url }}" width="800" height="600" alt="In Routine" class="fp-ba-img">
         {% endif %}
       </div>
     </div>
@@ -172,7 +172,7 @@
 
 {% schema %}
 {
-  "name": "fabaddons Product Landing",
+  "name": "fabaddons Product",
   "settings": [
     { "type": "text", "id": "tagline", "label": "Product tagline", "default": "Daily Targeted Care" },
     { "type": "text", "id": "compare_eyebrow", "label": "Comparison eyebrow", "default": "DAILY CONSISTENCY" },
@@ -192,6 +192,6 @@
       ]
     }
   ],
-  "presets": [{ "name": "fabaddons Product Landing" }]
+  "presets": [{ "name": "fabaddons Product" }]
 }
 {% endschema %}
