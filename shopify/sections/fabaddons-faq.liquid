@@ -1,0 +1,68 @@
+{% comment %}
+  fabaddons — Two-Column FAQ Accordion
+  Upload to: sections/fabaddons-faq.liquid
+{% endcomment %}
+
+<section id="faq" class="fab-faq">
+  <div class="fab-faq-layout">
+    <div>
+      <span class="fab-faq-eyebrow">{{ section.settings.eyebrow | escape }}</span>
+      <h2 class="fab-faq-heading">{{ section.settings.heading | escape }}</h2>
+      <p class="fab-faq-sub">{{ section.settings.subtitle | escape }}</p>
+      {% if section.settings.contact_url != blank %}
+        <a href="{{ section.settings.contact_url }}" class="fab-faq-link">{{ section.settings.contact_label | escape }} &rarr;</a>
+      {% elsif section.settings.contact_label != blank %}
+        <a href="{{ routes.all_products_collection_url }}" class="fab-faq-link">{{ section.settings.contact_label | escape }} &rarr;</a>
+      {% endif %}
+    </div>
+
+    <div class="fab-faq-list">
+      {% for block in section.blocks %}
+        <details class="fab-faq-item" {% if forloop.first %}open{% endif %} {{ block.shopify_attributes }}>
+          <summary class="fab-faq-q">{{ block.settings.question | escape }}</summary>
+          <div class="fab-faq-a">{{ block.settings.answer }}</div>
+        </details>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+<style>
+  .fab-faq { background: #ffffff; padding: 68px 20px; border-top: 1px solid #f1f5f9; }
+  .fab-faq-layout { max-width: 1240px; margin: 0 auto; display: grid; grid-template-columns: 0.8fr 1.4fr; gap: 56px; align-items: start; }
+  .fab-faq-eyebrow { display: block; font-size: 10px; font-weight: 700; letter-spacing: 0.19em; color: #145592; margin-bottom: 14px; text-transform: uppercase; }
+  .fab-faq-heading { font-family: Georgia, "Times New Roman", serif; font-size: clamp(32px, 3.8vw, 46px); font-weight: 600; line-height: 1.13; color: #20232a; margin: 0; }
+  .fab-faq-sub { font-size: 14px; line-height: 1.75; color: #6c737b; margin: 16px 0 0; max-width: 320px; }
+  .fab-faq-link { display: inline-block; margin-top: 20px; color: #145592; font-size: 14px; font-weight: 600; text-decoration: none; border-bottom: 1px solid #b9cddd; padding-bottom: 6px; }
+  .fab-faq-list { border-top: 1px solid #e3e8ed; }
+  .fab-faq-item { border-bottom: 1px solid #e3e8ed; }
+  .fab-faq-q { list-style: none; padding: 18px 0; font-size: 15px; font-weight: 600; color: #17212c; cursor: pointer; display: flex; justify-content: space-between; align-items: center; }
+  .fab-faq-q::after { content: "+"; font-size: 18px; color: #145592; }
+  .fab-faq-item[open] .fab-faq-q::after { content: "−"; }
+  .fab-faq-a { padding: 0 0 18px; font-size: 14px; line-height: 1.7; color: #65717e; }
+  @media (max-width: 900px) { .fab-faq-layout { grid-template-columns: 1fr; gap: 32px; } }
+</style>
+
+{% schema %}
+{
+  "name": "fabaddons FAQ",
+  "settings": [
+    { "type": "text", "id": "eyebrow", "label": "Eyebrow", "default": "HERE TO HELP" },
+    { "type": "text", "id": "heading", "label": "Heading", "default": "Frequently Asked Questions" },
+    { "type": "text", "id": "subtitle", "label": "Subtitle", "default": "Helpful answers before you place your order." },
+    { "type": "text", "id": "contact_label", "label": "Contact link label", "default": "Contact Support" },
+    { "type": "url", "id": "contact_url", "label": "Contact link URL" }
+  ],
+  "blocks": [
+    {
+      "type": "faq",
+      "name": "Question",
+      "settings": [
+        { "type": "text", "id": "question", "label": "Question", "default": "How long will delivery take?" },
+        { "type": "richtext", "id": "answer", "label": "Answer", "default": "<p>Orders ship within 24 hours on business days and typically arrive within 3 business days.</p>" }
+      ]
+    }
+  ],
+  "presets": [{ "name": "fabaddons FAQ" }]
+}
+{% endschema %}

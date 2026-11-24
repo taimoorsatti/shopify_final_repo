@@ -1,0 +1,81 @@
+{% comment %}
+  fabaddons — Our Customers' Opinions
+  Upload to: sections/fabaddons-customer-opinions.liquid
+{% endcomment %}
+
+<section id="customer-opinions" class="fab-opinions" style="background: {{ section.settings.bg_color }};">
+  <div class="fab-container">
+    <p class="fab-eyebrow">{{ section.settings.eyebrow | escape }}</p>
+    <h2 class="fab-serif-heading">{{ section.settings.heading | escape }}</h2>
+    <p class="fab-opinions-sub">{{ section.settings.description | escape }}</p>
+
+    <div class="fab-stars" aria-label="5-star rating scale">★★★★★</div>
+
+    {% assign has_app = false %}
+    {% for block in section.blocks %}
+      {% if block.type == '@app' %}
+        {% assign has_app = true %}
+        <div {{ block.shopify_attributes }}>{% render block %}</div>
+      {% endif %}
+    {% endfor %}
+
+    {% unless has_app %}
+      <div class="fab-invite-grid">
+        {% assign col = collections[section.settings.collection] %}
+        {% if col != blank and col.products.size > 0 %}
+          {% for product in col.products limit: 3 %}
+            <div class="fab-invite-card">
+              <h3 class="fab-invite-title">{{ product.title }}</h3>
+              <p class="fab-invite-copy">Have you tried {{ product.title }}? Share your honest impression with upcoming fabaddons shoppers.</p>
+              <a href="{{ product.url }}#reviews" class="fab-invite-link">Leave Feedback</a>
+            </div>
+          {% endfor %}
+        {% else %}
+          <div class="fab-invite-card">
+            <h3 class="fab-invite-title">Dr. Melaxin Eyephalt Eye Cream</h3>
+            <p class="fab-invite-copy">Tried our under-eye cream in your morning routine? Submit verified customer feedback once your order arrives.</p>
+            <a href="{{ routes.all_products_collection_url }}" class="fab-invite-link">View Product &rarr;</a>
+          </div>
+          <div class="fab-invite-card">
+            <h3 class="fab-invite-title">Turmeric Acid Cleaning Pads</h3>
+            <p class="fab-invite-copy">Using our exfoliating pads daily? Honest shopper impressions will appear here as orders are reviewed.</p>
+            <a href="{{ routes.all_products_collection_url }}" class="fab-invite-link">View Product &rarr;</a>
+          </div>
+          <div class="fab-invite-card">
+            <h3 class="fab-invite-title">Dr. Melaxin Peel Shot Kojic Acid Spray</h3>
+            <p class="fab-invite-copy">Added Peel Shot Spray or Anti Snore Mouth-Piece to your routine? Share genuine feedback with the fabaddons community.</p>
+            <a href="{{ routes.all_products_collection_url }}" class="fab-invite-link">View Product &rarr;</a>
+          </div>
+        {% endif %}
+      </div>
+    {% endunless %}
+  </div>
+</section>
+
+<style>
+  .fab-opinions { padding: 72px 20px; }
+  .fab-eyebrow { text-align: center; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.16em; color: #145592; margin: 0 0 10px; }
+  .fab-opinions-sub { text-align: center; max-width: 580px; margin: -20px auto 18px; font-size: 15px; line-height: 1.65; color: #475569; }
+  .fab-stars { text-align: center; font-size: 20px; letter-spacing: 4px; color: #d97706; margin-bottom: 32px; }
+  .fab-invite-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 20px; max-width: 1160px; margin: 0 auto; }
+  .fab-invite-card { background: #ffffff; border: 1px solid #e2e8f0; border-radius: 12px; padding: 24px; display: flex; flex-direction: column; gap: 10px; }
+  .fab-invite-title { margin: 0; font-size: 15px; font-weight: 600; color: #17212c; }
+  .fab-invite-copy { margin: 0; font-size: 14px; line-height: 1.6; color: #64748b; flex-grow: 1; }
+  .fab-invite-link { font-size: 13px; font-weight: 600; color: #145592; text-decoration: underline; }
+  @media (max-width: 767px) { .fab-invite-grid { grid-template-columns: 1fr; } }
+</style>
+
+{% schema %}
+{
+  "name": "fabaddons Opinions",
+  "settings": [
+    { "type": "color", "id": "bg_color", "label": "Background color", "default": "#F4F7FA" },
+    { "type": "text", "id": "eyebrow", "label": "Uppercase subtitle", "default": "LOVED BY CUSTOMERS" },
+    { "type": "text", "id": "heading", "label": "Heading", "default": "Our Customers' Opinions" },
+    { "type": "textarea", "id": "description", "label": "Description", "default": "Honest impressions from verified fabaddons shoppers." },
+    { "type": "collection", "id": "collection", "label": "Collection for feedback invitations" }
+  ],
+  "blocks": [{ "type": "@app" }],
+  "presets": [{ "name": "fabaddons Opinions" }]
+}
+{% endschema %}

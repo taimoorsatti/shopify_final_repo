@@ -1,0 +1,92 @@
+{% comment %}
+  fabaddons — Premium Blue Footer
+  Upload to: sections/fabaddons-footer.liquid
+{% endcomment %}
+
+<footer id="FabFooter-{{ section.id }}" class="uf-footer">
+  <div class="uf-wrap">
+    <div class="uf-main">
+      <div>
+        <a href="{{ routes.root_url }}" class="uf-logo-link">
+          {% if section.settings.logo != blank %}
+            {{ section.settings.logo | image_url: width: 280 | image_tag: alt: shop.name }}
+          {% else %}
+            <span>{{ section.settings.brand_text | default: shop.name | escape }}</span>
+          {% endif %}
+        </a>
+        <p class="uf-tagline">{{ section.settings.tagline | escape }}</p>
+      </div>
+
+      <div class="uf-cols">
+        {% for block in section.blocks %}
+          <div {{ block.shopify_attributes }}>
+            <h2 class="uf-col-title">{{ block.settings.heading | escape }}</h2>
+            <ul class="uf-col-list">
+              {% if block.settings.menu != blank and block.settings.menu.links.size > 0 %}
+                {% for link in block.settings.menu.links %}
+                  <li><a href="{{ link.url }}">{{ link.title | escape }}</a></li>
+                {% endfor %}
+              {% elsif forloop.index == 1 %}
+                <li><a href="{{ routes.root_url }}">Home</a></li>
+                <li><a href="{{ routes.all_products_collection_url }}">Shop All</a></li>
+                <li><a href="{{ routes.root_url }}#bestsellers">Bestsellers</a></li>
+                <li><a href="{{ routes.root_url }}#see-it-in-action">See It In Action</a></li>
+              {% elsif forloop.index == 2 %}
+                <li><a href="{{ routes.all_products_collection_url }}">Dr. Melaxin Eyephalt Eye Cream</a></li>
+                <li><a href="{{ routes.all_products_collection_url }}">Turmeric Acid Cleaning Pads</a></li>
+                <li><a href="{{ routes.all_products_collection_url }}">Dr. Melaxin Peel Shot Kojic Acid Spray</a></li>
+                <li><a href="{{ routes.all_products_collection_url }}">Anti Snore Mouth-Piece</a></li>
+              {% else %}
+                <li><a href="{{ routes.root_url }}#customer-opinions">Customer Opinions</a></li>
+                <li><a href="{{ routes.root_url }}#faq">FAQ</a></li>
+                <li><a href="{{ routes.cart_url }}">Shopping Bag</a></li>
+              {% endif %}
+            </ul>
+          </div>
+        {% endfor %}
+      </div>
+    </div>
+
+    <div class="uf-bottom">
+      <p>&copy; {{ 'now' | date: '%Y' }} {{ shop.name }}. All rights reserved.</p>
+    </div>
+  </div>
+</footer>
+
+<style>
+  #FabFooter-{{ section.id }} { background: #145592; color: #ffffff; position: relative; overflow: hidden; }
+  #FabFooter-{{ section.id }} .uf-wrap { max-width: 1320px; margin: 0 auto; padding: 56px 28px 28px; }
+  #FabFooter-{{ section.id }} .uf-main { display: grid; grid-template-columns: 1.1fr 1.5fr; gap: 64px; padding-bottom: 40px; border-bottom: 1px solid rgba(255,255,255,0.16); }
+  #FabFooter-{{ section.id }} .uf-logo-link { display: inline-flex; padding: 12px 20px; border-radius: 12px; background: #ffffff; color: #145592; font-weight: 700; text-decoration: none; font-size: 16px; }
+  #FabFooter-{{ section.id }} .uf-tagline { margin: 16px 0 0; font-size: 14px; line-height: 1.65; color: rgba(255,255,255,0.85); max-width: 340px; }
+  #FabFooter-{{ section.id }} .uf-cols { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 28px; }
+  #FabFooter-{{ section.id }} .uf-col-title { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.14em; color: rgba(255,255,255,0.75); margin: 0 0 12px; }
+  #FabFooter-{{ section.id }} .uf-col-list { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 8px; font-size: 14px; }
+  #FabFooter-{{ section.id }} .uf-col-list a { color: rgba(255,255,255,0.92); text-decoration: none; }
+  #FabFooter-{{ section.id }} .uf-col-list a:hover { text-decoration: underline; }
+  #FabFooter-{{ section.id }} .uf-bottom { padding-top: 22px; font-size: 12px; color: rgba(255,255,255,0.75); }
+  @media (max-width: 900px) { #FabFooter-{{ section.id }} .uf-main { grid-template-columns: 1fr; gap: 36px; } }
+</style>
+
+{% schema %}
+{
+  "name": "fabaddons Blue Footer",
+  "settings": [
+    { "type": "image_picker", "id": "logo", "label": "Logo image" },
+    { "type": "text", "id": "brand_text", "label": "Brand text fallback", "default": "fabaddons" },
+    { "type": "textarea", "id": "tagline", "label": "Footer tagline", "default": "Find your everyday favorites. Explore the latest from fabaddons and make room for something new." }
+  ],
+  "blocks": [
+    {
+      "type": "link_column",
+      "name": "Link Column",
+      "limit": 3,
+      "settings": [
+        { "type": "text", "id": "heading", "label": "Heading", "default": "Quick Links" },
+        { "type": "link_list", "id": "menu", "label": "Menu" }
+      ]
+    }
+  ],
+  "presets": [{ "name": "fabaddons Blue Footer" }]
+}
+{% endschema %}

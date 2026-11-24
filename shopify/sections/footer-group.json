@@ -1,0 +1,29 @@
+{
+  "name": "Footer",
+  "type": "footer",
+  "sections": {
+    "footer": {
+      "type": "fabaddons-footer",
+      "blocks": {
+        "col_1": {
+          "type": "link_column",
+          "settings": { "heading": "Quick Links" }
+        },
+        "col_2": {
+          "type": "link_column",
+          "settings": { "heading": "Our Essentials" }
+        },
+        "col_3": {
+          "type": "link_column",
+          "settings": { "heading": "Here to Help" }
+        }
+      },
+      "block_order": ["col_1", "col_2", "col_3"],
+      "settings": {
+        "brand_text": "fabaddons",
+        "tagline": "Find your everyday favorites. Explore the latest skincare and sleep wellness essentials from fabaddons and make room for something new."
+      }
+    }
+  },
+  "order": ["footer"]
+}

@@ -1,0 +1,6 @@
+{
+  "sections": {
+    "main": { "type": "fabaddons-faq", "settings": { "eyebrow": "INFORMATION", "heading": "fabaddons Store Guide", "subtitle": "Helpful information about our skincare and sleep wellness essentials." } }
+  },
+  "order": ["main"]
+}

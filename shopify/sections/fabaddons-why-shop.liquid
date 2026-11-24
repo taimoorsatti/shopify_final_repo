@@ -1,0 +1,62 @@
+{% comment %}
+  fabaddons — Why Shop With Us (4 Blue Trust Cards)
+  Upload to: sections/fabaddons-why-shop.liquid
+{% endcomment %}
+
+<section id="FabWhy-{{ section.id }}" class="fab-why">
+  <div class="fab-container">
+    <h2 class="fab-serif-heading">{{ section.settings.heading | escape }}</h2>
+    <div class="fab-why-grid">
+      {% for block in section.blocks %}
+        <div class="fab-why-card" {{ block.shopify_attributes }}>
+          <div class="fab-why-icon">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="12" r="9"/><path d="M9 12l2 2 4-4"/></svg>
+          </div>
+          <h3>{{ block.settings.title | escape }}</h3>
+          <p>{{ block.settings.copy | escape }}</p>
+        </div>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+<style>
+  #FabWhy-{{ section.id }} { background: #ffffff; padding: 68px 20px; }
+  #FabWhy-{{ section.id }} .fab-why-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 22px; max-width: 1280px; margin: 0 auto; }
+  #FabWhy-{{ section.id }} .fab-why-card { background: #145592; color: #ffffff; border-radius: 12px; padding: 32px 24px; text-align: center; display: flex; flex-direction: column; align-items: center; }
+  #FabWhy-{{ section.id }} .fab-why-icon { width: 52px; height: 52px; border-radius: 9999px; border: 1px solid rgba(255,255,255,0.25); background: rgba(255,255,255,0.08); display: grid; place-items: center; margin-bottom: 18px; }
+  #FabWhy-{{ section.id }} .fab-why-card h3 { margin: 0 0 10px; font-size: 16px; font-weight: 600; color: #ffffff; }
+  #FabWhy-{{ section.id }} .fab-why-card p { margin: 0; font-size: 14px; line-height: 1.6; color: rgba(255,255,255,0.85); }
+  @media (max-width: 1023px) { #FabWhy-{{ section.id }} .fab-why-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+  @media (max-width: 639px) { #FabWhy-{{ section.id }} .fab-why-grid { grid-template-columns: 1fr; } }
+</style>
+
+{% schema %}
+{
+  "name": "fabaddons Why Shop With Us",
+  "settings": [
+    { "type": "text", "id": "heading", "label": "Heading", "default": "Why Shop With Us?" }
+  ],
+  "blocks": [
+    {
+      "type": "card",
+      "name": "Trust Card",
+      "settings": [
+        { "type": "text", "id": "title", "label": "Title", "default": "Curated Finds" },
+        { "type": "textarea", "id": "copy", "label": "Description", "default": "Explore skincare and wellness essentials selected to bring ease to daily routines." }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "fabaddons Why Shop With Us",
+      "blocks": [
+        { "type": "card", "settings": { "title": "Curated Finds", "copy": "Explore skincare and wellness essentials selected for everyday routines." } },
+        { "type": "card", "settings": { "title": "Thoughtful Value", "copy": "Multi-pack options and straightforward essentials crafted for your budget." } },
+        { "type": "card", "settings": { "title": "Secure Checkout", "copy": "Complete your purchase safely with encrypted payment processing." } },
+        { "type": "card", "settings": { "title": "Here to Help", "copy": "Questions about an order or routine? Our support team is ready to help." } }
+      ]
+    }
+  ]
+}
+{% endschema %}

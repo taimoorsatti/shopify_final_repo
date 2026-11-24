@@ -1,0 +1,6 @@
+{
+  "name": "TECHFLEX STORE",
+  "description": "Curated Korean skincare and sleep wellness essentials — Bestselling Products, See It In Action video demonstrations, and verified customer opinions.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

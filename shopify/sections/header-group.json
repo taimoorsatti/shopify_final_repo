@@ -1,0 +1,17 @@
+{
+  "name": "Header",
+  "type": "header",
+  "sections": {
+    "header": {
+      "type": "fabaddons-header",
+      "settings": {
+        "show_announcement": true,
+        "announcement_text": "Welcome to fabaddons • Discover Our New Arrivals • Shop Your Daily Favorites",
+        "ticker_bg": "#145592",
+        "brand_color": "#145592",
+        "logo_text": "fabaddons"
+      }
+    }
+  },
+  "order": ["header"]
+}

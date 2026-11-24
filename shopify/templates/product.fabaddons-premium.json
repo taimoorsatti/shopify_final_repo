@@ -1,0 +1,46 @@
+{
+  "sections": {
+    "main": {
+      "type": "fabaddons-product-landing",
+      "blocks": {
+        "f1": { "type": "feature", "settings": { "title": "Smoother-looking fine lines", "copy": "Cushions delicate skin with lightweight moisture for a refined finish." } },
+        "f2": { "type": "feature", "settings": { "title": "Reduced puffiness look", "copy": "Cooling fingertip application helps morning eye contours appear rested." } },
+        "f3": { "type": "feature", "settings": { "title": "Temporarily firmer feel", "copy": "Creates a supple, balanced surface that pairs smoothly under concealer." } },
+        "f4": { "type": "feature", "settings": { "title": "Compact travel-ready size", "copy": "Sleek container fits effortlessly on your vanity or carry-on pouch." } }
+      },
+      "block_order": ["f1", "f2", "f3", "f4"],
+      "settings": {
+        "tagline": "Daily Targeted Care",
+        "compare_eyebrow": "DAILY CONSISTENCY",
+        "compare_heading": "Before & after",
+        "compare_copy": "Gentle daily application supports comfort, hydration, and clean prep.",
+        "features_heading": "Features for a fresher-looking eye area"
+      }
+    },
+    "videos": {
+      "type": "fabaddons-see-it-in-action",
+      "blocks": {
+        "v1": { "type": "video_card", "settings": { "custom_label": "Dr. Melaxin Eyephalt Eye Cream", "fallback_price": "$34.00", "fallback_video_asset": "demo_eye_cream.mp4", "fallback_poster_asset": "video_eye_cream.jpg" } },
+        "v2": { "type": "video_card", "settings": { "custom_label": "Turmeric Acid Cleaning Pads", "fallback_price": "$26.00", "fallback_video_asset": "demo_turmeric_pads.mp4", "fallback_poster_asset": "video_turmeric_pads.jpg" } },
+        "v3": { "type": "video_card", "settings": { "custom_label": "Dr. Melaxin Peel Shot Kojic Acid Spray", "fallback_price": "$38.00", "fallback_video_asset": "demo_peel_spray.mp4", "fallback_poster_asset": "video_peel_spray.jpg" } },
+        "v4": { "type": "video_card", "settings": { "custom_label": "Anti Snore Mouth-Piece", "fallback_price": "$29.00", "fallback_video_asset": "demo_sleep_mouthpiece.mp4", "fallback_poster_asset": "video_sleep_mouthpiece.jpg" } }
+      },
+      "block_order": ["v1", "v2", "v3", "v4"],
+      "settings": { "heading": "See It In Action", "subtitle": "Discover your daily favorites." }
+    },
+    "opinions": {
+      "type": "fabaddons-customer-opinions",
+      "settings": { "bg_color": "#F4F7FA", "eyebrow": "LOVED BY CUSTOMERS", "heading": "Our Customers' Opinions", "description": "Honest impressions from verified fabaddons shoppers." }
+    },
+    "faq": {
+      "type": "fabaddons-faq",
+      "blocks": {
+        "q1": { "type": "faq", "settings": { "question": "Can I wear this under daily makeup or SPF?", "answer": "<p>Yes. Apply a thin layer and allow 60 seconds for full absorption before layering sunscreen or concealer.</p>" } },
+        "q2": { "type": "faq", "settings": { "question": "How often should I apply it?", "answer": "<p>Designed for gentle daily morning and evening routines.</p>" } }
+      },
+      "block_order": ["q1", "q2"],
+      "settings": { "eyebrow": "PRODUCT QUESTIONS", "heading": "Answers to your questions", "subtitle": "Helpful details before you order." }
+    }
+  },
+  "order": ["main", "videos", "opinions", "faq"]
+}

@@ -1,0 +1,123 @@
+{% comment %}
+  fabaddons — Cinematic Hero Carousel
+  Upload to: sections/fabaddons-hero.liquid
+{% endcomment %}
+
+<section id="FabHero-{{ section.id }}" class="fab-hero" data-autoplay="{{ section.settings.autoplay }}" data-delay="{{ section.settings.delay | times: 1000 }}">
+  <div class="fab-hero-stage">
+    {% for block in section.blocks %}
+      <article class="fab-hero-slide{% if forloop.first %} is-active{% endif %}" {{ block.shopify_attributes }}>
+        {% if block.settings.image != blank %}
+          {{ block.settings.image | image_url: width: 2200 | image_tag: class: 'fab-hero-img', loading: 'eager', alt: block.settings.heading }}
+        {% elsif block.settings.fallback_asset != blank %}
+          <img src="{{ block.settings.fallback_asset | asset_url }}" alt="{{ block.settings.heading | escape }}" class="fab-hero-img" loading="eager">
+        {% else %}
+          <img src="{{ 'hero_collection.jpg' | asset_url }}" alt="{{ block.settings.heading | escape }}" class="fab-hero-img" loading="eager">
+        {% endif %}
+        <div class="fab-hero-scrim"></div>
+        <div class="fab-hero-content">
+          <div class="fab-hero-copy">
+            {% if block.settings.eyebrow != blank %}
+              <p class="fab-hero-eyebrow">{{ block.settings.eyebrow | escape }}</p>
+            {% endif %}
+            <h1 class="fab-hero-heading">{{ block.settings.heading | escape }}</h1>
+            {% if block.settings.subtext != blank %}
+              <p class="fab-hero-subtext">{{ block.settings.subtext | escape }}</p>
+            {% endif %}
+            {% if block.settings.cta_label != blank %}
+              <a href="{{ block.settings.cta_link | default: routes.all_products_collection_url }}" class="fab-hero-cta">
+                {{ block.settings.cta_label | escape }}
+              </a>
+            {% endif %}
+          </div>
+        </div>
+      </article>
+    {% endfor %}
+
+    <div class="fab-hero-controls">
+      <div class="fab-hero-dots" data-hero-dots>
+        {% for block in section.blocks %}
+          <button type="button" class="fab-hero-dot{% if forloop.first %} is-active{% endif %}" data-hero-dot="{{ forloop.index0 }}" aria-label="Slide {{ forloop.index }}"></button>
+        {% endfor %}
+      </div>
+      <div class="fab-hero-btns">
+        <button type="button" class="fab-hero-icon-btn" data-hero-toggle aria-label="Pause or play slideshow">Pause</button>
+        <button type="button" class="fab-hero-icon-btn" data-hero-prev aria-label="Previous slide">&#8249;</button>
+        <button type="button" class="fab-hero-icon-btn" data-hero-next aria-label="Next slide">&#8250;</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  #FabHero-{{ section.id }} .fab-hero-stage { position: relative; height: 600px; overflow: hidden; background: #0f2942; }
+  #FabHero-{{ section.id }} .fab-hero-slide { position: absolute; inset: 0; opacity: 0; transition: opacity 0.65s ease; pointer-events: none; }
+  #FabHero-{{ section.id }} .fab-hero-slide.is-active { opacity: 1; z-index: 2; pointer-events: auto; }
+  #FabHero-{{ section.id }} .fab-hero-img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  #FabHero-{{ section.id }} .fab-hero-scrim { position: absolute; inset: 0; background: linear-gradient(to top, rgba(0,0,0,0.78), rgba(0,0,0,0.3) 55%, rgba(0,0,0,0.12)); }
+  #FabHero-{{ section.id }} .fab-hero-content { position: absolute; inset: 0; max-width: 1280px; margin: 0 auto; padding: 0 28px 72px; display: flex; align-items: flex-end; }
+  #FabHero-{{ section.id }} .fab-hero-copy { max-width: 560px; color: #ffffff; }
+  #FabHero-{{ section.id }} .fab-hero-eyebrow { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.18em; margin: 0 0 10px; opacity: 0.85; }
+  #FabHero-{{ section.id }} .fab-hero-heading { font-family: Georgia, "Times New Roman", serif; font-size: clamp(32px, 4.5vw, 54px); font-weight: 600; line-height: 1.1; margin: 0 0 12px; }
+  #FabHero-{{ section.id }} .fab-hero-subtext { font-size: 15px; line-height: 1.6; margin: 0 0 20px; color: rgba(255,255,255,0.9); }
+  #FabHero-{{ section.id }} .fab-hero-cta { display: inline-block; padding: 12px 24px; border-radius: 8px; background: #ffffff; color: #17212c; font-size: 14px; font-weight: 600; text-decoration: none; }
+  #FabHero-{{ section.id }} .fab-hero-controls { position: absolute; bottom: 20px; left: 0; right: 0; z-index: 5; max-width: 1280px; margin: 0 auto; padding: 0 28px; display: flex; align-items: center; justify-content: space-between; }
+  #FabHero-{{ section.id }} .fab-hero-dots { display: flex; gap: 8px; }
+  #FabHero-{{ section.id }} .fab-hero-dot { width: 8px; height: 8px; border-radius: 9999px; border: 0; background: rgba(255,255,255,0.45); cursor: pointer; padding: 0; transition: width 0.2s ease; }
+  #FabHero-{{ section.id }} .fab-hero-dot.is-active { width: 26px; background: #ffffff; }
+  #FabHero-{{ section.id }} .fab-hero-btns { display: flex; gap: 8px; }
+  #FabHero-{{ section.id }} .fab-hero-icon-btn { min-width: 38px; height: 38px; padding: 0 12px; border-radius: 9999px; border: 0; background: rgba(0,0,0,0.5); color: #ffffff; cursor: pointer; font-size: 13px; }
+  @media (max-width: 767px) { #FabHero-{{ section.id }} .fab-hero-stage { height: 480px; } }
+</style>
+
+<script>
+  (() => {
+    const root = document.getElementById('FabHero-{{ section.id }}');
+    if (!root) return;
+    const slides = root.querySelectorAll('.fab-hero-slide');
+    const dots = root.querySelectorAll('[data-hero-dot]');
+    if (!slides.length) return;
+    let index = 0;
+    let paused = root.dataset.autoplay !== 'true';
+    const show = (next) => {
+      index = (next + slides.length) % slides.length;
+      slides.forEach((s, i) => s.classList.toggle('is-active', i === index));
+      dots.forEach((d, i) => d.classList.toggle('is-active', i === index));
+    };
+    const toggleBtn = root.querySelector('[data-hero-toggle]');
+    toggleBtn?.addEventListener('click', () => {
+      paused = !paused;
+      toggleBtn.textContent = paused ? 'Play' : 'Pause';
+    });
+    root.querySelector('[data-hero-prev]')?.addEventListener('click', () => show(index - 1));
+    root.querySelector('[data-hero-next]')?.addEventListener('click', () => show(index + 1));
+    dots.forEach((d, i) => d.addEventListener('click', () => show(i)));
+    setInterval(() => { if (!paused) show(index + 1); }, Number(root.dataset.delay) || 5000);
+  })();
+</script>
+
+{% schema %}
+{
+  "name": "fabaddons Hero Carousel",
+  "settings": [
+    { "type": "checkbox", "id": "autoplay", "label": "Auto-rotate slides", "default": true },
+    { "type": "range", "id": "delay", "label": "Seconds per slide", "min": 3, "max": 10, "step": 1, "default": 5 }
+  ],
+  "blocks": [
+    {
+      "type": "slide",
+      "name": "Hero Slide",
+      "settings": [
+        { "type": "image_picker", "id": "image", "label": "Slide image" },
+        { "type": "text", "id": "fallback_asset", "label": "Bundled asset filename", "default": "hero_collection.jpg" },
+        { "type": "text", "id": "eyebrow", "label": "Eyebrow", "default": "Beauty Essentials" },
+        { "type": "text", "id": "heading", "label": "Heading", "default": "Your daily beauty ritual." },
+        { "type": "text", "id": "subtext", "label": "Subtext", "default": "A little self-care. A quiet moment made just for you." },
+        { "type": "text", "id": "cta_label", "label": "Button label", "default": "Discover Beauty" },
+        { "type": "url", "id": "cta_link", "label": "Button link" }
+      ]
+    }
+  ],
+  "presets": [{ "name": "fabaddons Hero Carousel" }]
+}
+{% endschema %}

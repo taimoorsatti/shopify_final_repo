@@ -1,0 +1,85 @@
+@import "tailwindcss";
+
+@theme {
+  --font-display: "Plus Jakarta Sans", -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-sans: "DM Sans", -apple-system, BlinkMacSystemFont, sans-serif;
+}
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+    font-family: var(--font-sans);
+  }
+
+  h1, h2, h3, h4 {
+    font-family: var(--font-display);
+  }
+}
+
+@keyframes kenBurnsSlow {
+  0% {
+    transform: scale(1) translate3d(0, 0, 0);
+  }
+  50% {
+    transform: scale(1.06) translate3d(-1%, -1.5%, 0);
+  }
+  100% {
+    transform: scale(1.02) translate3d(1%, -0.5%, 0);
+  }
+}
+
+@keyframes kenBurnsMacro {
+  0% {
+    transform: scale(1.04) translate3d(1.5%, 0, 0);
+  }
+  100% {
+    transform: scale(1.1) translate3d(-1.5%, -1%, 0);
+  }
+}
+
+.animate-ken-burns {
+  animation: kenBurnsSlow 10s ease-in-out infinite alternate;
+}
+
+.animate-ken-burns-macro {
+  animation: kenBurnsMacro 6s ease-in-out infinite alternate;
+}
+
+@keyframes marqueeScroll {
+  0% {
+    transform: translateX(0%);
+  }
+  100% {
+    transform: translateX(-50%);
+  }
+}
+
+.animate-marquee {
+  display: flex;
+  width: max-content;
+  animation: marqueeScroll 28s linear infinite;
+}
+
+.animate-marquee-slow {
+  display: flex;
+  width: max-content;
+  animation: marqueeScroll 36s linear infinite;
+}
+
+.animate-marquee:hover,
+.animate-marquee-slow:hover {
+  animation-play-state: paused;
+}
+
+.font-editorial {
+  font-family: Georgia, "Times New Roman", serif;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-ken-burns,
+  .animate-ken-burns-macro,
+  .animate-marquee,
+  .animate-marquee-slow {
+    animation: none;
+  }
+}

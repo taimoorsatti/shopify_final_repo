@@ -1,0 +1,197 @@
+{% comment %}
+  fabaddons — Premium Product Landing Section (FabProduct layout)
+  Upload to: sections/fabaddons-product-landing.liquid
+{% endcomment %}
+
+<div id="FabProduct-{{ section.id }}" class="fp-root">
+  <div class="fp-container">
+    <nav class="fp-breadcrumb" aria-label="Breadcrumb">
+      <a href="{{ routes.root_url }}">Home</a> / <a href="{{ routes.all_products_collection_url }}">Shop</a> / <span>{{ product.title }}</span>
+    </nav>
+
+    <div class="fp-main">
+      <div class="fp-gallery">
+        <div class="fp-stage">
+          {% if product.featured_image != blank %}
+            {{ product.featured_image | image_url: width: 1200 | image_tag: class: 'fp-main-img', id: 'fpMainImg', alt: product.title }}
+          {% else %}
+            <img src="{{ 'product_eye_cream.jpg' | asset_url }}" id="fpMainImg" alt="{{ product.title | escape }}" class="fp-main-img">
+          {% endif %}
+        </div>
+        {% if product.images.size > 1 %}
+          <div class="fp-thumbs">
+            {% for image in product.images limit: 4 %}
+              <button type="button" class="fp-thumb" onclick="document.getElementById('fpMainImg').src='{{ image | image_url: width: 1200 }}'">
+                {{ image | image_url: width: 300 | image_tag: alt: product.title }}
+              </button>
+            {% endfor %}
+          </div>
+        {% endif %}
+      </div>
+
+      <div class="fp-info">
+        {% if section.settings.tagline != blank %}
+          <span class="fp-tagline">{{ section.settings.tagline | escape }}</span>
+        {% endif %}
+        <h1 class="fp-title">{{ product.title | default: 'Dr. Melaxin Eyephalt Eye Cream' }}</h1>
+
+        {% assign active_price = product.selected_or_first_available_variant.price | default: 3400 %}
+        {% assign active_compare = product.selected_or_first_available_variant.compare_at_price | default: 4400 %}
+
+        <div class="fp-price-line">
+          <span class="fp-price">{{ active_price | money }}</span>
+          {% if active_compare > active_price %}
+            <s>{{ active_compare | money }}</s>
+          {% endif %}
+        </div>
+
+        <div class="fp-desc">
+          {% if product.description != blank %}
+            {{ product.description }}
+          {% else %}
+            <p>Lightweight Korean eye cream formulated for smooth under-eye comfort and morning routine prep.</p>
+          {% endif %}
+        </div>
+
+        {% if product != blank %}
+          {% form 'product', product, id: 'FabForm' %}
+            <input type="hidden" name="id" value="{{ product.selected_or_first_available_variant.id }}">
+            <div class="fp-packs">
+              <label class="fp-pack">
+                <input type="radio" name="quantity" value="1" checked>
+                <span>Buy 1</span>
+                <strong>{{ active_price | money }}</strong>
+              </label>
+              <label class="fp-pack">
+                <input type="radio" name="quantity" value="2">
+                <span>Buy 2</span>
+                <strong>{{ active_price | times: 2 | money }}</strong>
+              </label>
+              <label class="fp-pack">
+                <input type="radio" name="quantity" value="3">
+                <span>Buy 3</span>
+                <strong>{{ active_price | times: 3 | money }}</strong>
+              </label>
+            </div>
+
+            <button type="submit" class="fp-add-btn">Add to cart &rarr;</button>
+          {% endform %}
+        {% else %}
+          <div id="FabForm" class="fp-packs">
+            <div class="fp-pack"><span>Buy 1</span><strong>{{ active_price | money }}</strong></div>
+            <div class="fp-pack"><span>Buy 2</span><strong>{{ active_price | times: 2 | money }}</strong></div>
+            <div class="fp-pack"><span>Buy 3</span><strong>{{ active_price | times: 3 | money }}</strong></div>
+            <a href="{{ routes.all_products_collection_url }}" class="fp-add-btn" style="text-align:center;text-decoration:none;display:block;">Shop Collection &rarr;</a>
+          </div>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+
+  <!-- Before & After Section -->
+  <section class="fp-comparison">
+    <div class="fp-container fp-split">
+      <div>
+        <span class="fp-eyebrow">{{ section.settings.compare_eyebrow | escape }}</span>
+        <h2 class="fp-serif">{{ section.settings.compare_heading | escape }}</h2>
+        <p class="fp-muted">{{ section.settings.compare_copy | escape }}</p>
+        <a href="#FabForm" class="fp-shop-link">Shop this product &rarr;</a>
+      </div>
+      <div class="fp-ba-box">
+        {% if section.settings.before_image != blank %}
+          {{ section.settings.before_image | image_url: width: 900 | image_tag: class: 'fp-ba-img', alt: 'Before' }}
+        {% else %}
+          <img src="{{ 'product_eye_cream.jpg' | asset_url }}" alt="Product Prep" class="fp-ba-img">
+        {% endif %}
+        {% if section.settings.after_image != blank %}
+          {{ section.settings.after_image | image_url: width: 900 | image_tag: class: 'fp-ba-img', alt: 'After' }}
+        {% else %}
+          <img src="{{ 'editorial_eye_ritual.jpg' | asset_url }}" alt="In Routine" class="fp-ba-img">
+        {% endif %}
+      </div>
+    </div>
+  </section>
+
+  <!-- Blue Wave Features Banner -->
+  <section class="fp-wave-banner">
+    <span class="fp-wave-eyebrow">THOUGHTFUL FORMULATION</span>
+    <h2 class="fp-wave-title">{{ section.settings.features_heading | escape }}</h2>
+  </section>
+  <div class="fp-container fp-features-grid">
+    {% for block in section.blocks %}
+      {% if block.type == 'feature' %}
+        <div class="fp-feature-card" {{ block.shopify_attributes }}>
+          <span class="fp-step-badge">{{ forloop.index }}</span>
+          <h3>{{ block.settings.title | escape }}</h3>
+          <p>{{ block.settings.copy | escape }}</p>
+        </div>
+      {% endif %}
+    {% endfor %}
+  </div>
+</div>
+
+<style>
+  #FabProduct-{{ section.id }} { background: #ffffff; color: #17212c; padding-bottom: 48px; }
+  #FabProduct-{{ section.id }} .fp-container { max-width: 1240px; margin: 0 auto; padding: 0 20px; }
+  #FabProduct-{{ section.id }} .fp-breadcrumb { padding: 20px 0 16px; font-size: 12px; color: #65717e; }
+  #FabProduct-{{ section.id }} .fp-breadcrumb a { color: inherit; text-decoration: none; }
+  #FabProduct-{{ section.id }} .fp-main { display: grid; grid-template-columns: 1.08fr 0.92fr; gap: 48px; align-items: start; padding-bottom: 56px; }
+  #FabProduct-{{ section.id }} .fp-stage { aspect-ratio: 1 / 1; background: #f6f7f9; border: 1px solid #e3e8ed; border-radius: 16px; overflow: hidden; }
+  #FabProduct-{{ section.id }} .fp-main-img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  #FabProduct-{{ section.id }} .fp-thumbs { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-top: 12px; }
+  #FabProduct-{{ section.id }} .fp-thumb { border: 1px solid #e3e8ed; border-radius: 10px; overflow: hidden; padding: 0; background: #f5f6f8; cursor: pointer; aspect-ratio: 4 / 3; }
+  #FabProduct-{{ section.id }} .fp-thumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  #FabProduct-{{ section.id }} .fp-tagline { display: inline-block; padding: 5px 12px; border-radius: 6px; background: #f0f5fa; border: 1px solid #e3e8ed; color: #145592; font-size: 12px; font-weight: 600; margin-bottom: 12px; }
+  #FabProduct-{{ section.id }} .fp-title { font-size: clamp(26px, 2.8vw, 36px); font-weight: 700; margin: 0 0 12px; }
+  #FabProduct-{{ section.id }} .fp-price-line { display: flex; gap: 10px; align-items: baseline; font-size: 22px; font-weight: 700; color: #145592; margin-bottom: 16px; }
+  #FabProduct-{{ section.id }} .fp-price-line s { color: #65717e; font-size: 16px; font-weight: 400; }
+  #FabProduct-{{ section.id }} .fp-desc { font-size: 14px; line-height: 1.65; color: #65717e; margin-bottom: 20px; }
+  #FabProduct-{{ section.id }} .fp-packs { display: flex; flex-direction: column; gap: 10px; margin-bottom: 16px; }
+  #FabProduct-{{ section.id }} .fp-pack { display: flex; align-items: center; justify-content: space-between; padding: 14px 16px; border: 1px solid #e3e8ed; border-radius: 12px; cursor: pointer; }
+  #FabProduct-{{ section.id }} .fp-add-btn { width: 100%; padding: 15px 24px; border-radius: 12px; border: 0; background: #111827; color: #ffffff; font-size: 14px; font-weight: 600; cursor: pointer; }
+  #FabProduct-{{ section.id }} .fp-comparison { background: #f4f7fa; border-top: 1px solid #e3e8ed; border-bottom: 1px solid #e3e8ed; padding: 64px 0; }
+  #FabProduct-{{ section.id }} .fp-split { display: grid; grid-template-columns: 1fr 1fr; gap: 40px; align-items: center; }
+  #FabProduct-{{ section.id }} .fp-eyebrow { font-size: 11px; font-weight: 700; letter-spacing: 0.16em; color: #145592; display: block; margin-bottom: 8px; }
+  #FabProduct-{{ section.id }} .fp-serif { font-family: Georgia, "Times New Roman", serif; font-size: clamp(28px, 3.5vw, 38px); margin: 0 0 12px; }
+  #FabProduct-{{ section.id }} .fp-muted { font-size: 15px; line-height: 1.65; color: #65717e; }
+  #FabProduct-{{ section.id }} .fp-shop-link { display: inline-block; margin-top: 12px; font-size: 14px; font-weight: 600; color: #145592; text-decoration: none; }
+  #FabProduct-{{ section.id }} .fp-ba-box { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  #FabProduct-{{ section.id }} .fp-ba-img { width: 100%; border-radius: 12px; border: 1px solid #e3e8ed; aspect-ratio: 4 / 3; object-fit: cover; }
+  #FabProduct-{{ section.id }} .fp-wave-banner { background: #145592; color: #ffffff; text-align: center; padding: 52px 20px; }
+  #FabProduct-{{ section.id }} .fp-wave-eyebrow { font-size: 11px; font-weight: 700; letter-spacing: 0.18em; opacity: 0.8; display: block; margin-bottom: 8px; }
+  #FabProduct-{{ section.id }} .fp-wave-title { font-family: Georgia, "Times New Roman", serif; font-size: clamp(26px, 3.5vw, 38px); margin: 0; }
+  #FabProduct-{{ section.id }} .fp-features-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; padding-top: 40px; }
+  #FabProduct-{{ section.id }} .fp-feature-card { border: 1px solid #e3e8ed; border-radius: 12px; background: #f8fafc; padding: 22px; }
+  #FabProduct-{{ section.id }} .fp-step-badge { display: inline-grid; place-items: center; width: 28px; height: 28px; border-radius: 9999px; background: #145592; color: #ffffff; font-size: 12px; font-weight: 700; margin-bottom: 10px; }
+  @media (max-width: 900px) {
+    #FabProduct-{{ section.id }} .fp-main,
+    #FabProduct-{{ section.id }} .fp-split,
+    #FabProduct-{{ section.id }} .fp-features-grid { grid-template-columns: 1fr; }
+  }
+</style>
+
+{% schema %}
+{
+  "name": "fabaddons Product Landing",
+  "settings": [
+    { "type": "text", "id": "tagline", "label": "Product tagline", "default": "Daily Targeted Care" },
+    { "type": "text", "id": "compare_eyebrow", "label": "Comparison eyebrow", "default": "DAILY CONSISTENCY" },
+    { "type": "text", "id": "compare_heading", "label": "Comparison heading", "default": "Before & after" },
+    { "type": "textarea", "id": "compare_copy", "label": "Comparison description", "default": "Gentle daily application supports comfort, hydration, and clean prep." },
+    { "type": "image_picker", "id": "before_image", "label": "Before image" },
+    { "type": "image_picker", "id": "after_image", "label": "After image" },
+    { "type": "text", "id": "features_heading", "label": "Wave banner heading", "default": "Features for a fresher-looking routine" }
+  ],
+  "blocks": [
+    {
+      "type": "feature",
+      "name": "Feature Card",
+      "settings": [
+        { "type": "text", "id": "title", "label": "Title", "default": "Smooth, cushioned finish" },
+        { "type": "textarea", "id": "copy", "label": "Description", "default": "Lightweight formula designed for comfortable everyday wear." }
+      ]
+    }
+  ],
+  "presets": [{ "name": "fabaddons Product Landing" }]
+}
+{% endschema %}

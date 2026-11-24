@@ -1,0 +1,20 @@
+{
+  "general": {
+    "accessibility": {
+      "skip_to_text": "Skip to content"
+    }
+  },
+  "sections": {
+    "header": {
+      "name": "Header"
+    },
+    "footer": {
+      "name": "Footer"
+    }
+  },
+  "products": {
+    "product": {
+      "add_to_cart": "Add to cart"
+    }
+  }
+}

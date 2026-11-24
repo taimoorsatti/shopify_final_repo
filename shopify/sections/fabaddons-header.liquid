@@ -1,0 +1,79 @@
+{% comment %}
+  fabaddons — Announcement Ticker & Sticky Header
+  Upload to: sections/fabaddons-header.liquid
+{% endcomment %}
+
+<header id="FabHeader-{{ section.id }}" class="fab-header-wrap">
+  {% if section.settings.show_announcement %}
+    <div class="fab-ticker" role="region" aria-label="Store announcements">
+      <div class="fab-ticker-track">
+        {% for i in (1..6) %}
+          <span class="fab-ticker-item">{{ section.settings.announcement_text | escape }}</span>
+        {% endfor %}
+      </div>
+    </div>
+  {% endif %}
+
+  <div class="fab-nav-bar">
+    <div class="fab-nav-inner">
+      <a href="{{ routes.root_url }}" class="fab-logo">
+        {% if section.settings.logo != blank %}
+          {{ section.settings.logo | image_url: width: 320 | image_tag: alt: shop.name, class: 'fab-logo-img' }}
+        {% else %}
+          <span>{{ section.settings.logo_text | default: shop.name | escape }}</span>
+        {% endif %}
+      </a>
+
+      <nav class="fab-nav-links" aria-label="Primary navigation">
+        {% if section.settings.menu != blank %}
+          {% for link in section.settings.menu.links %}
+            <a href="{{ link.url }}" class="fab-nav-link">{{ link.title | escape }}</a>
+          {% endfor %}
+        {% else %}
+          <a href="{{ routes.root_url }}" class="fab-nav-link">Home</a>
+          <a href="{{ routes.all_products_collection_url }}" class="fab-nav-link">Shop</a>
+          <a href="{{ routes.root_url }}#bestsellers" class="fab-nav-link">Bestsellers</a>
+          <a href="{{ routes.root_url }}#see-it-in-action" class="fab-nav-link">See It In Action</a>
+          <a href="{{ routes.root_url }}#faq" class="fab-nav-link">FAQ</a>
+        {% endif %}
+      </nav>
+
+      <a href="{{ routes.cart_url }}" class="fab-bag-btn" aria-label="Shopping bag">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
+        <span>Bag (<span data-cart-count>{{ cart.item_count }}</span>)</span>
+      </a>
+    </div>
+  </div>
+</header>
+
+<style>
+  #FabHeader-{{ section.id }} { position: sticky; top: 0; z-index: 40; background: #ffffff; border-bottom: 1px solid rgba(0,0,0,0.08); }
+  #FabHeader-{{ section.id }} .fab-ticker { background: {{ section.settings.ticker_bg }}; color: #ffffff; overflow: hidden; padding: 8px 0; }
+  #FabHeader-{{ section.id }} .fab-ticker-track { display: flex; width: max-content; animation: fabTickerScroll 28s linear infinite; font-size: 12px; font-weight: 500; }
+  #FabHeader-{{ section.id }} .fab-ticker-item { padding: 0 24px; white-space: nowrap; }
+  @keyframes fabTickerScroll { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
+  #FabHeader-{{ section.id }} .fab-nav-inner { max-width: 1320px; margin: 0 auto; padding: 0 20px; height: 64px; display: flex; align-items: center; justify-content: space-between; gap: 24px; }
+  #FabHeader-{{ section.id }} .fab-logo { font-size: 20px; font-weight: 700; color: {{ section.settings.brand_color }}; text-decoration: none; white-space: nowrap; }
+  #FabHeader-{{ section.id }} .fab-logo-img { height: 32px; width: auto; display: block; }
+  #FabHeader-{{ section.id }} .fab-nav-links { display: flex; align-items: center; gap: 28px; }
+  #FabHeader-{{ section.id }} .fab-nav-link { font-size: 14px; font-weight: 500; color: #24211d; text-decoration: none; white-space: nowrap; transition: color 0.15s ease; }
+  #FabHeader-{{ section.id }} .fab-nav-link:hover { color: #0079cf; }
+  #FabHeader-{{ section.id }} .fab-bag-btn { display: inline-flex; align-items: center; gap: 8px; padding: 8px 16px; border-radius: 8px; background: {{ section.settings.brand_color }}; color: #ffffff; font-size: 13px; font-weight: 600; text-decoration: none; white-space: nowrap; }
+  @media (max-width: 767px) { #FabHeader-{{ section.id }} .fab-nav-links { display: none; } }
+</style>
+
+{% schema %}
+{
+  "name": "fabaddons Header",
+  "settings": [
+    { "type": "checkbox", "id": "show_announcement", "label": "Show announcement ticker", "default": true },
+    { "type": "text", "id": "announcement_text", "label": "Announcement text", "default": "Welcome to fabaddons • Discover Our New Arrivals • Shop Your Daily Favorites" },
+    { "type": "color", "id": "ticker_bg", "label": "Ticker background", "default": "#145592" },
+    { "type": "color", "id": "brand_color", "label": "Brand accent color", "default": "#145592" },
+    { "type": "image_picker", "id": "logo", "label": "Logo image (optional)" },
+    { "type": "text", "id": "logo_text", "label": "Logo text fallback", "default": "fabaddons" },
+    { "type": "link_list", "id": "menu", "label": "Header menu" }
+  ],
+  "presets": [{ "name": "fabaddons Header" }]
+}
+{% endschema %}

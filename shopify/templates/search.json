@@ -1,0 +1,9 @@
+{
+  "sections": {
+    "main": {
+      "type": "fabaddons-bestselling-products",
+      "settings": { "heading": "Search Results", "bg_color": "#FFFFFF" }
+    }
+  },
+  "order": ["main"]
+}

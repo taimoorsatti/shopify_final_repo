@@ -1,0 +1,9 @@
+{
+  "sections": {
+    "main": {
+      "type": "fabaddons-cart",
+      "settings": {}
+    }
+  },
+  "order": ["main"]
+}

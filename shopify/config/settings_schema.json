@@ -1,0 +1,27 @@
+[
+  {
+    "name": "theme_info",
+    "theme_name": "fabaddons",
+    "theme_version": "1.0.0",
+    "theme_author": "fabaddons",
+    "theme_documentation_url": "https://help.shopify.com",
+    "theme_support_url": "https://help.shopify.com"
+  },
+  {
+    "name": "Brand Colors",
+    "settings": [
+      {
+        "type": "color",
+        "id": "brand_primary",
+        "label": "Primary Brand Blue",
+        "default": "#145592"
+      },
+      {
+        "type": "color",
+        "id": "brand_ink",
+        "label": "Primary Ink",
+        "default": "#17212c"
+      }
+    ]
+  }
+]

@@ -1,0 +1,36 @@
+{
+  "sections": {
+    "main": {
+      "type": "fabaddons-bestselling-products",
+      "blocks": {
+        "p1": { "type": "product_card", "settings": { "fallback_asset": "product_eye_cream.jpg", "fallback_title": "Dr. Melaxin Eyephalt Eye Cream", "fallback_category": "Skincare", "fallback_price": "$34.00", "fallback_compare_price": "$44.00", "fallback_discount": "Save 23%" } },
+        "p2": { "type": "product_card", "settings": { "fallback_asset": "product_turmeric_pads.jpg", "fallback_title": "Turmeric Acid Cleaning Pads", "fallback_category": "Skincare", "fallback_price": "$26.00", "fallback_compare_price": "$34.00", "fallback_discount": "Save 24%" } },
+        "p3": { "type": "product_card", "settings": { "fallback_asset": "product_peel_spray.jpg", "fallback_title": "Dr. Melaxin Peel Shot Kojic Acid Spray", "fallback_category": "Skincare", "fallback_price": "$38.00", "fallback_compare_price": "$48.00", "fallback_discount": "Save 21%" } },
+        "p4": { "type": "product_card", "settings": { "fallback_asset": "product_sleep_mouthpiece.jpg", "fallback_title": "Anti Snore Mouth-Piece", "fallback_category": "Sleep Wellness", "fallback_price": "$29.00", "fallback_compare_price": "$39.00", "fallback_discount": "Save 26%" } }
+      },
+      "block_order": ["p1", "p2", "p3", "p4"],
+      "settings": { "heading": "All Products", "bg_color": "#FFFFFF" }
+    },
+    "videos": {
+      "type": "fabaddons-see-it-in-action",
+      "blocks": {
+        "v1": { "type": "video_card", "settings": { "custom_label": "Dr. Melaxin Eyephalt Eye Cream", "fallback_price": "$34.00", "fallback_video_asset": "demo_eye_cream.mp4", "fallback_poster_asset": "video_eye_cream.jpg" } },
+        "v2": { "type": "video_card", "settings": { "custom_label": "Turmeric Acid Cleaning Pads", "fallback_price": "$26.00", "fallback_video_asset": "demo_turmeric_pads.mp4", "fallback_poster_asset": "video_turmeric_pads.jpg" } },
+        "v3": { "type": "video_card", "settings": { "custom_label": "Dr. Melaxin Peel Shot Kojic Acid Spray", "fallback_price": "$38.00", "fallback_video_asset": "demo_peel_spray.mp4", "fallback_poster_asset": "video_peel_spray.jpg" } },
+        "v4": { "type": "video_card", "settings": { "custom_label": "Anti Snore Mouth-Piece", "fallback_price": "$29.00", "fallback_video_asset": "demo_sleep_mouthpiece.mp4", "fallback_poster_asset": "video_sleep_mouthpiece.jpg" } }
+      },
+      "block_order": ["v1", "v2", "v3", "v4"],
+      "settings": { "heading": "See It In Action", "subtitle": "Discover your daily favorites." }
+    },
+    "opinions": {
+      "type": "fabaddons-customer-opinions",
+      "settings": {
+        "bg_color": "#F4F7FA",
+        "eyebrow": "LOVED BY CUSTOMERS",
+        "heading": "Our Customers' Opinions",
+        "description": "Honest impressions from verified fabaddons shoppers."
+      }
+    }
+  },
+  "order": ["main", "videos", "opinions"]
+}
