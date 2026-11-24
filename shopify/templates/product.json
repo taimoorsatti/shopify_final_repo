@@ -3,44 +3,112 @@
     "main": {
       "type": "fabaddons-product-landing",
       "blocks": {
-        "f1": { "type": "feature", "settings": { "title": "Smoother-looking fine lines", "copy": "Cushions delicate skin with lightweight moisture for a refined finish." } },
-        "f2": { "type": "feature", "settings": { "title": "Reduced puffiness look", "copy": "Cooling fingertip application helps morning eye contours appear rested." } },
-        "f3": { "type": "feature", "settings": { "title": "Temporarily firmer feel", "copy": "Creates a supple, balanced surface that pairs smoothly under concealer." } },
-        "f4": { "type": "feature", "settings": { "title": "Compact travel-ready size", "copy": "Sleek container fits effortlessly on your vanity or carry-on pouch." } }
+        "f1": {
+          "type": "feature",
+          "settings": {
+            "title": "Smoother-looking fine lines",
+            "copy": "Cushions dry under-eye creases with lightweight moisture for a refined finish."
+          }
+        },
+        "f2": {
+          "type": "feature",
+          "settings": {
+            "title": "Reduced puffiness look",
+            "copy": "Cooling fingertip application helps morning eye contours appear rested."
+          }
+        },
+        "f3": {
+          "type": "feature",
+          "settings": {
+            "title": "Temporarily firmer feel",
+            "copy": "Creates a supple, balanced surface that pairs smoothly under concealer."
+          }
+        },
+        "f4": {
+          "type": "feature",
+          "settings": {
+            "title": "Compact 15 ml travel size",
+            "copy": "Sleek brushed container fits effortlessly on your vanity or carry-on pouch."
+          }
+        },
+        "r1": {
+          "type": "routine_item",
+          "settings": {
+            "fallback_asset": "product_turmeric_pads.jpg",
+            "fallback_title": "Turmeric Acid Cleaning Pads",
+            "fallback_price": "$26.00"
+          }
+        },
+        "r2": {
+          "type": "routine_item",
+          "settings": {
+            "fallback_asset": "product_peel_spray.jpg",
+            "fallback_title": "Dr. Melaxin Peel Shot Kojic Acid Spray",
+            "fallback_price": "$38.00"
+          }
+        },
+        "r3": {
+          "type": "routine_item",
+          "settings": {
+            "fallback_asset": "product_sleep_mouthpiece.jpg",
+            "fallback_title": "Anti Snore Mouth-Piece",
+            "fallback_price": "$29.00"
+          }
+        }
       },
-      "block_order": ["f1", "f2", "f3", "f4"],
+      "block_order": ["f1", "f2", "f3", "f4", "r1", "r2", "r3"],
       "settings": {
-        "tagline": "Daily Targeted Care",
+        "fallback_title": "Dr. Melaxin Eyephalt Eye Cream",
+        "tagline": "Daily Targeted Under-Eye Care",
+        "subtitle": "Korean targeted under-eye firming cream",
         "compare_eyebrow": "DAILY CONSISTENCY",
         "compare_heading": "Before & after",
-        "compare_copy": "Gentle daily application supports comfort, hydration, and clean prep.",
+        "compare_copy": "Slide to compare packaging prep and real skin/routine texture. Gentle daily application supports comfort, hydration, and clean prep without exaggerated claims.",
         "features_heading": "Features for a fresher-looking eye area"
       }
     },
-    "videos": {
-      "type": "fabaddons-see-it-in-action",
-      "blocks": {
-        "v1": { "type": "video_card", "settings": { "custom_label": "Dr. Melaxin Eyephalt Eye Cream", "fallback_price": "$34.00", "fallback_reel_asset": "demo_eye_cream.webp", "fallback_poster_asset": "video_eye_cream.jpg" } },
-        "v2": { "type": "video_card", "settings": { "custom_label": "Turmeric Acid Cleaning Pads", "fallback_price": "$26.00", "fallback_reel_asset": "demo_turmeric_pads.webp", "fallback_poster_asset": "video_turmeric_pads.jpg" } },
-        "v3": { "type": "video_card", "settings": { "custom_label": "Dr. Melaxin Peel Shot Kojic Acid Spray", "fallback_price": "$38.00", "fallback_reel_asset": "demo_peel_spray.webp", "fallback_poster_asset": "video_peel_spray.jpg" } },
-        "v4": { "type": "video_card", "settings": { "custom_label": "Anti Snore Mouth-Piece", "fallback_price": "$29.00", "fallback_reel_asset": "demo_sleep_mouthpiece.webp", "fallback_poster_asset": "video_sleep_mouthpiece.jpg" } }
-      },
-      "block_order": ["v1", "v2", "v3", "v4"],
-      "settings": { "heading": "See It In Action", "subtitle": "Discover your daily favorites." }
-    },
     "opinions": {
       "type": "fabaddons-customer-opinions",
-      "settings": { "bg_color": "#F4F7FA", "eyebrow": "LOVED BY CUSTOMERS", "heading": "Our Customers' Opinions", "description": "Honest impressions from verified fabaddons shoppers." }
+      "settings": {
+        "bg_color": "#F4F7FA",
+        "eyebrow": "LOVED BY CUSTOMERS",
+        "heading": "Our Customers' Opinions",
+        "description": "Honest impressions from verified fabaddons shoppers."
+      }
     },
     "faq": {
       "type": "fabaddons-faq",
       "blocks": {
-        "q1": { "type": "faq", "settings": { "question": "Can I wear this under daily makeup or SPF?", "answer": "<p>Yes. Apply a thin layer and allow 60 seconds for full absorption before layering sunscreen or concealer.</p>" } },
-        "q2": { "type": "faq", "settings": { "question": "How often should I apply it?", "answer": "<p>Designed for gentle daily morning and evening routines.</p>" } }
+        "q1": {
+          "type": "faq",
+          "settings": {
+            "question": "Can I wear Dr. Melaxin Eyephalt Eye Cream under makeup?",
+            "answer": "<p>Yes. Use a thin, tapped layer and allow 60 seconds for full absorption before applying concealer or foundation.</p>"
+          }
+        },
+        "q2": {
+          "type": "faq",
+          "settings": {
+            "question": "How often should I apply it?",
+            "answer": "<p>It is designed for daily use in both morning and evening skincare routines.</p>"
+          }
+        },
+        "q3": {
+          "type": "faq",
+          "settings": {
+            "question": "What size is included?",
+            "answer": "<p>Each standard unit provides 15 ml (0.5 fl oz), enough for weeks of consistent under-eye application.</p>"
+          }
+        }
       },
-      "block_order": ["q1", "q2"],
-      "settings": { "eyebrow": "PRODUCT QUESTIONS", "heading": "Answers to your questions", "subtitle": "Helpful details before you order." }
+      "block_order": ["q1", "q2", "q3"],
+      "settings": {
+        "eyebrow": "PRODUCT QUESTIONS",
+        "heading": "Answers to your questions",
+        "subtitle": "Common questions about Dr. Melaxin Eyephalt Eye Cream.",
+        "contact_label": "Share a question or feedback"
+      }
     }
   },
-  "order": ["main", "videos", "opinions", "faq"]
+  "order": ["main", "opinions", "faq"]
 }

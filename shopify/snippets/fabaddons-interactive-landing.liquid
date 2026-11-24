@@ -1,0 +1,912 @@
+{% comment %}
+  fabaddons — Built-in Interactive One-Page Product Landing & Bag Drawer
+  Ensures clicking any product card opens the full Add-to-Cart Product Landing Page immediately,
+  matching the storefront preview even before products are manually linked in Theme Editor.
+{% endcomment %}
+
+<div id="FabQuickLanding" class="fql-root" hidden aria-live="polite"></div>
+
+<div id="FabBagOverlay" class="fbg-overlay" hidden>
+  <aside class="fbg-drawer" role="dialog" aria-modal="true" aria-label="Shopping Bag">
+    <div class="fbg-head">
+      <div>
+        <h2 class="fbg-title">Your Bag</h2>
+        <p class="fbg-sub" data-fbg-sub>0 items in your bag</p>
+      </div>
+      <button type="button" class="fbg-close" data-fbg-close aria-label="Close shopping bag">&times;</button>
+    </div>
+    <div class="fbg-body" data-fbg-body></div>
+    <div class="fbg-foot" data-fbg-foot hidden>
+      <div class="fbg-total-row">
+        <span>Subtotal</span>
+        <strong data-fbg-subtotal>$0.00</strong>
+      </div>
+      <a href="{{ routes.cart_url }}" class="fbg-checkout-btn">Go to Cart &amp; Checkout &rarr;</a>
+      <button type="button" class="fbg-continue-btn" data-fbg-close>Continue Shopping</button>
+    </div>
+  </aside>
+</div>
+
+<style>
+  .fql-root { background: #ffffff; color: #17212c; }
+  .fql-root .fp-container { max-width: 1240px; margin: 0 auto; padding: 0 20px; }
+  .fql-root .fp-top-bar { padding-top: 22px; padding-bottom: 16px; display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px; font-size: 12px; color: #65717e; }
+  .fql-root .fp-breadcrumb { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+  .fql-root .fp-breadcrumb button, .fql-root .fp-breadcrumb a { background: none; border: 0; padding: 0; color: inherit; cursor: pointer; font: inherit; text-decoration: none; }
+  .fql-root .fp-crumb-current { color: #17212c; font-weight: 600; }
+  .fql-root .fp-back-link { background: none; border: 0; padding: 0; color: #145592; font-weight: 600; font-size: 12px; cursor: pointer; }
+  .fql-root .fp-buy-section { padding-bottom: 64px; }
+  .fql-root .fp-main { display: grid; grid-template-columns: 1.08fr 0.92fr; gap: 48px; align-items: start; }
+  .fql-root .fp-gallery-col { position: sticky; top: 96px; }
+  .fql-root .fp-stage { position: relative; aspect-ratio: 1 / 1; background: #f6f7f9; border: 1px solid #e3e8ed; border-radius: 16px; overflow: hidden; box-shadow: 0 18px 48px rgba(20,55,85,0.08); }
+  .fql-root .fp-main-img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .fql-root .fp-gal-arrow { position: absolute; top: 50%; transform: translateY(-50%); width: 40px; height: 40px; border-radius: 9999px; border: 0; background: rgba(255,255,255,0.92); color: #17212c; font-size: 20px; cursor: pointer; display: grid; place-items: center; box-shadow: 0 4px 12px rgba(0,0,0,0.08); }
+  .fql-root .fp-gal-prev { left: 12px; }
+  .fql-root .fp-gal-next { right: 12px; }
+  .fql-root .fp-thumbs { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-top: 14px; }
+  .fql-root .fp-thumb { border: 2px solid transparent; border-radius: 12px; overflow: hidden; padding: 0; background: #f5f6f8; cursor: pointer; aspect-ratio: 4 / 3; opacity: 0.75; }
+  .fql-root .fp-thumb.is-active { border-color: #145592; opacity: 1; }
+  .fql-root .fp-thumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .fql-root .fp-tagline { display: inline-block; padding: 5px 12px; border-radius: 6px; background: #f0f5fa; border: 1px solid #e3e8ed; color: #145592; font-size: 12px; font-weight: 600; margin-bottom: 14px; }
+  .fql-root .fp-title { font-size: clamp(28px, 3vw, 36px); font-weight: 700; margin: 0; line-height: 1.15; letter-spacing: -0.02em; }
+  .fql-root .fp-subtitle { margin: 8px 0 14px; font-size: 14px; color: #65717e; }
+  .fql-root .fp-price-line { display: flex; gap: 10px; align-items: baseline; margin-bottom: 16px; font-variant-numeric: tabular-nums; }
+  .fql-root .fp-price { font-size: 24px; font-weight: 700; color: #145592; }
+  .fql-root .fp-compare { color: #65717e; font-size: 16px; }
+  .fql-root .fp-save-pill { font-size: 12px; font-weight: 700; color: #145592; }
+  .fql-root .fp-desc { font-size: 14px; line-height: 1.65; color: #65717e; margin-bottom: 20px; }
+  .fql-root .fp-qty-heading { font-size: 12px; font-weight: 700; margin: 0 0 10px; }
+  .fql-root .fp-packs { display: flex; flex-direction: column; gap: 10px; margin-bottom: 16px; }
+  .fql-root .fp-pack { width: 100%; display: flex; align-items: center; justify-content: space-between; padding: 14px 16px; border: 1px solid #e3e8ed; border-radius: 12px; background: #ffffff; cursor: pointer; text-align: left; }
+  .fql-root .fp-pack.is-selected { border-color: #145592; background: #f0f5fa; }
+  .fql-root .fp-pack-left { display: flex; align-items: center; gap: 10px; font-size: 14px; color: #17212c; }
+  .fql-root .fp-radio-dot { width: 16px; height: 16px; border-radius: 9999px; border: 1px solid #cbd5e1; position: relative; flex-shrink: 0; }
+  .fql-root .fp-pack.is-selected .fp-radio-dot { border-color: #145592; }
+  .fql-root .fp-pack.is-selected .fp-radio-dot::after { content: ""; position: absolute; inset: 3px; border-radius: 9999px; background: #145592; }
+  .fql-root .fp-pack-badge { font-size: 11px; font-weight: 600; color: #145592; }
+  .fql-root .fp-pack-right { text-align: right; font-variant-numeric: tabular-nums; }
+  .fql-root .fp-pack-right strong { display: block; font-size: 14px; color: #17212c; }
+  .fql-root .fp-pack-right span { display: block; font-size: 11px; font-weight: 600; color: #145592; }
+  .fql-root .fp-total-row { display: flex; justify-content: space-between; align-items: center; padding: 6px 4px 12px; font-size: 14px; color: #65717e; }
+  .fql-root .fp-total-row strong { font-size: 18px; color: #17212c; }
+  .fql-root .fp-add-btn { width: 100%; padding: 15px 24px; border-radius: 12px; border: 0; background: #111827; color: #ffffff; font-size: 14px; font-weight: 600; cursor: pointer; display: block; text-align: center; }
+  .fql-root .fp-add-btn:hover { background: #145592; }
+  .fql-root .fp-accordions { border-top: 1px solid #e3e8ed; margin-top: 22px; }
+  .fql-root .fp-acc-item { border-bottom: 1px solid #e3e8ed; }
+  .fql-root .fp-acc-trigger { list-style: none; padding: 14px 0; font-size: 14px; font-weight: 600; cursor: pointer; display: flex; justify-content: space-between; align-items: center; }
+  .fql-root .fp-acc-trigger::after { content: "+"; color: #145592; font-size: 18px; }
+  .fql-root .fp-acc-item[open] .fp-acc-trigger::after { content: "−"; }
+  .fql-root .fp-acc-list, .fql-root .fp-acc-steps { margin: 0 0 16px; padding-left: 18px; font-size: 13px; color: #65717e; line-height: 1.7; }
+  .fql-root .fp-walkthrough { padding: 60px 20px; border-top: 1px solid #e3e8ed; }
+  .fql-root .fp-walk-container { max-width: 1040px; margin: 0 auto; }
+  .fql-root .fp-walk-head { text-align: center; margin-bottom: 36px; }
+  .fql-root .fp-serif-center { font-family: Georgia, "Times New Roman", serif; font-size: clamp(28px, 3.6vw, 36px); font-weight: 600; margin: 0; }
+  .fql-root .fp-muted-center { font-size: 14px; color: #65717e; margin: 8px 0 0; }
+  .fql-root .fp-walk-grid { display: grid; grid-template-columns: 300px 1fr; gap: 36px; align-items: center; }
+  .fql-root .fp-reel-box { position: relative; aspect-ratio: 9 / 16; border-radius: 16px; overflow: hidden; background: #111827; border: 1px solid #e3e8ed; }
+  .fql-root .fp-reel-fg { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .fql-root .fp-reel-scrim { position: absolute; inset: 0; background: linear-gradient(to bottom, rgba(0,0,0,0.4), transparent 45%, rgba(0,0,0,0.75)); pointer-events: none; }
+  .fql-root .fp-reel-top { position: absolute; top: 12px; left: 12px; z-index: 4; }
+  .fql-root .fp-reel-btn { background: rgba(0,0,0,0.65); color: #ffffff; border: 0; border-radius: 9999px; padding: 6px 12px; font-size: 11px; font-weight: 600; cursor: pointer; }
+  .fql-root .fp-reel-caption { position: absolute; bottom: 14px; left: 14px; right: 14px; z-index: 4; color: #ffffff; }
+  .fql-root .fp-reel-step-caption { margin: 0 0 4px; font-size: 11px; opacity: 0.9; }
+  .fql-root .fp-reel-title { margin: 0; font-size: 12px; font-weight: 600; }
+  .fql-root .fp-step-tabs { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-top: 20px; }
+  .fql-root .fp-step-tab { border: 1px solid #e3e8ed; background: #ffffff; border-radius: 12px; padding: 12px; text-align: left; cursor: pointer; }
+  .fql-root .fp-step-tab.is-active { border-color: #145592; background: #f0f5fa; }
+  .fql-root .fp-step-label { display: block; font-size: 11px; font-weight: 700; color: #145592; }
+  .fql-root .fp-step-text { display: block; font-size: 12px; font-weight: 600; color: #17212c; margin-top: 4px; }
+  .fql-root .fp-comparison { background: #f4f7fa; border-top: 1px solid #e3e8ed; border-bottom: 1px solid #e3e8ed; padding: 64px 0; }
+  .fql-root .fp-split { display: grid; grid-template-columns: 1fr 1fr; gap: 40px; align-items: center; }
+  .fql-root .fp-eyebrow { font-size: 11px; font-weight: 700; letter-spacing: 0.16em; color: #145592; display: block; margin-bottom: 8px; text-transform: uppercase; }
+  .fql-root .fp-serif { font-family: Georgia, "Times New Roman", serif; font-size: clamp(28px, 3.5vw, 38px); margin: 0 0 12px; line-height: 1.15; }
+  .fql-root .fp-muted { font-size: 15px; line-height: 1.65; color: #65717e; }
+  .fql-root .fp-shop-link { background: none; border: 0; padding: 0; display: inline-block; margin-top: 12px; font-size: 14px; font-weight: 600; color: #145592; cursor: pointer; }
+  .fql-root .fp-ba-slider-box { position: relative; aspect-ratio: 4 / 3; border-radius: 16px; overflow: hidden; border: 1px solid #e3e8ed; background: #ffffff; }
+  .fql-root .fp-ba-full { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .fql-root .fp-ba-overlay { position: absolute; inset: 0; clip-path: inset(0 50% 0 0); }
+  .fql-root .fp-ba-divider { position: absolute; top: 0; bottom: 0; left: 50%; width: 2px; background: #ffffff; box-shadow: 0 0 6px rgba(0,0,0,0.3); }
+  .fql-root .fp-ba-tag { position: absolute; top: 12px; padding: 4px 10px; border-radius: 6px; font-size: 11px; font-weight: 600; color: #ffffff; }
+  .fql-root .fp-ba-left { left: 12px; background: rgba(0,0,0,0.65); }
+  .fql-root .fp-ba-right { right: 12px; background: rgba(20,85,146,0.92); }
+  .fql-root .fp-ba-range { width: 100%; margin-top: 12px; accent-color: #145592; cursor: pointer; }
+  .fql-root .fp-wave-banner { position: relative; background: #145592; color: #ffffff; text-align: center; padding: 56px 20px 68px; overflow: hidden; }
+  .fql-root .fp-wave-eyebrow { font-size: 11px; font-weight: 700; letter-spacing: 0.18em; opacity: 0.85; display: block; margin-bottom: 8px; }
+  .fql-root .fp-wave-title { font-family: Georgia, "Times New Roman", serif; font-size: clamp(26px, 3.5vw, 38px); margin: 0; }
+  .fql-root .fp-wave-svg { position: absolute; bottom: 0; left: 0; width: 100%; height: 32px; fill: #ffffff; display: block; }
+  .fql-root .fp-features-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; padding-top: 44px; padding-bottom: 52px; }
+  .fql-root .fp-feature-card { border: 1px solid #e3e8ed; border-radius: 12px; background: #f8fafc; padding: 22px; }
+  .fql-root .fp-feature-card h3 { margin: 0 0 8px; font-size: 15px; font-weight: 600; }
+  .fql-root .fp-feature-card p { margin: 0; font-size: 13px; color: #65717e; line-height: 1.6; }
+  .fql-root .fp-step-badge { display: inline-grid; place-items: center; width: 28px; height: 28px; border-radius: 9999px; background: #145592; color: #ffffff; font-size: 12px; font-weight: 700; margin-bottom: 10px; }
+  .fql-root .fp-story-one { padding: 56px 0; background: #ffffff; }
+  .fql-root .fp-story-two { padding: 60px 0; background: #f4f7fa; border-top: 1px solid #e3e8ed; border-bottom: 1px solid #e3e8ed; }
+  .fql-root .fp-story-img-wrap { aspect-ratio: 4 / 3; border-radius: 16px; overflow: hidden; border: 1px solid #e3e8ed; }
+  .fql-root .fp-story-img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .fql-root .fp-ritual-list { list-style: none; margin: 18px 0 0; padding: 0; display: flex; flex-direction: column; gap: 12px; }
+  .fql-root .fp-ritual-list li { display: flex; align-items: flex-start; gap: 12px; background: #ffffff; padding: 14px 16px; border-radius: 12px; border: 1px solid #e3e8ed; font-size: 14px; line-height: 1.6; }
+  .fql-root .fp-ritual-num { width: 28px; height: 28px; border-radius: 9999px; background: #145592; color: #ffffff; font-size: 12px; font-weight: 700; display: inline-grid; place-items: center; flex-shrink: 0; }
+  .fql-root .fp-cross-sell { padding: 60px 0; background: #ffffff; }
+  .fql-root .fp-cross-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 22px; }
+  .fql-root .fp-cross-card { border: 1px solid #e3e8ed; border-radius: 12px; overflow: hidden; text-align: left; background: #ffffff; padding: 0; cursor: pointer; display: block; width: 100%; }
+  .fql-root .fp-cross-media { aspect-ratio: 4 / 3; background: #f6f7f9; overflow: hidden; }
+  .fql-root .fp-cross-img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .fql-root .fp-cross-body { padding: 14px 16px; display: flex; align-items: center; justify-content: space-between; gap: 10px; font-size: 14px; }
+  .fql-root .fp-cross-body span { font-weight: 600; color: #145592; flex-shrink: 0; }
+  .fql-root .fp-faq-wrap { padding: 60px 20px; border-top: 1px solid #e3e8ed; background: #ffffff; }
+  .fql-root .fp-faq-grid { max-width: 1240px; margin: 0 auto; display: grid; grid-template-columns: 0.8fr 1.4fr; gap: 48px; align-items: start; }
+  .fql-root .fp-faq-list { border-top: 1px solid #e3e8ed; }
+  .fql-root .fp-faq-item { border-bottom: 1px solid #e3e8ed; }
+  .fql-root .fp-faq-q { list-style: none; padding: 18px 0; font-size: 15px; font-weight: 600; cursor: pointer; display: flex; justify-content: space-between; align-items: center; }
+  .fql-root .fp-faq-q::after { content: "+"; font-size: 18px; color: #145592; }
+  .fql-root .fp-faq-item[open] .fp-faq-q::after { content: "−"; }
+  .fql-root .fp-faq-a { padding: 0 0 18px; font-size: 14px; line-height: 1.7; color: #65717e; }
+
+  .fbg-overlay { position: fixed; inset: 0; z-index: 90; background: rgba(17,24,39,0.45); display: flex; justify-content: flex-end; }
+  .fbg-overlay[hidden] { display: none; }
+  .fbg-drawer { width: min(420px, 100%); height: 100%; background: #ffffff; display: flex; flex-direction: column; box-shadow: -12px 0 32px rgba(0,0,0,0.16); }
+  .fbg-head { padding: 20px; border-bottom: 1px solid #e3e8ed; display: flex; align-items: center; justify-content: space-between; }
+  .fbg-title { margin: 0; font-size: 18px; font-weight: 700; }
+  .fbg-sub { margin: 2px 0 0; font-size: 12px; color: #65717e; }
+  .fbg-close { background: none; border: 0; font-size: 24px; line-height: 1; cursor: pointer; color: #65717e; padding: 4px 8px; }
+  .fbg-body { flex: 1; overflow-y: auto; padding: 18px 20px; display: flex; flex-direction: column; gap: 14px; }
+  .fbg-empty { text-align: center; padding: 48px 16px; color: #65717e; font-size: 14px; }
+  .fbg-item { display: grid; grid-template-columns: 72px 1fr; gap: 12px; padding-bottom: 14px; border-bottom: 1px solid #f1f5f9; }
+  .fbg-item-img { width: 72px; height: 72px; border-radius: 10px; object-fit: cover; border: 1px solid #e3e8ed; }
+  .fbg-item-title { margin: 0; font-size: 14px; font-weight: 600; color: #17212c; }
+  .fbg-item-meta { margin: 3px 0 8px; font-size: 12px; color: #65717e; }
+  .fbg-qty-bar { display: flex; align-items: center; justify-content: space-between; }
+  .fbg-qty-ctrl { display: inline-flex; align-items: center; border: 1px solid #e3e8ed; border-radius: 8px; }
+  .fbg-qty-ctrl button { background: none; border: 0; width: 28px; height: 28px; cursor: pointer; font-weight: 700; }
+  .fbg-qty-ctrl span { padding: 0 8px; font-size: 13px; font-weight: 600; }
+  .fbg-rm { background: none; border: 0; font-size: 12px; color: #65717e; cursor: pointer; text-decoration: underline; }
+  .fbg-foot { padding: 18px 20px; border-top: 1px solid #e3e8ed; background: #f8fafc; display: flex; flex-direction: column; gap: 10px; }
+  .fbg-total-row { display: flex; justify-content: space-between; font-size: 15px; }
+  .fbg-checkout-btn { display: block; text-align: center; background: #145592; color: #ffffff; padding: 13px 18px; border-radius: 10px; font-size: 14px; font-weight: 600; text-decoration: none; }
+  .fbg-continue-btn { background: #ffffff; border: 1px solid #e3e8ed; color: #17212c; padding: 11px 18px; border-radius: 10px; font-size: 13px; font-weight: 600; cursor: pointer; }
+
+  @media (max-width: 900px) {
+    .fql-root .fp-gallery-col { position: static; }
+    .fql-root .fp-main, .fql-root .fp-walk-grid, .fql-root .fp-split,
+    .fql-root .fp-features-grid, .fql-root .fp-cross-grid, .fql-root .fp-step-tabs,
+    .fql-root .fp-faq-grid { grid-template-columns: 1fr; }
+  }
+</style>
+
+<script>
+  (() => {
+    const CATALOG = {
+      'eye-cream': {
+        key: 'eye-cream',
+        handle: 'dr-melaxin-eyephalt-eye-cream',
+        title: 'Dr. Melaxin Eyephalt Eye Cream',
+        tagline: 'Daily Targeted Under-Eye Care',
+        subtitle: 'Korean targeted under-eye firming cream',
+        description: 'Formulated in Korea for delicate under-eye skin, Dr. Melaxin Eyephalt Eye Cream delivers concentrated hydration and a smooth, cushioned finish that wears comfortably beneath daytime SPF or makeup.',
+        images: [
+          {{ 'product_eye_cream.jpg' | asset_url | json }},
+          {{ 'video_eye_cream.jpg' | asset_url | json }},
+          {{ 'editorial_eye_ritual.jpg' | asset_url | json }}
+        ],
+        reel: {{ 'demo_eye_cream.webp' | asset_url | json }},
+        poster: {{ 'video_eye_cream.jpg' | asset_url | json }},
+        videoTitle: 'Under-Eye Application & Texture',
+        walkSteps: [
+          'Gentle ring-finger application',
+          'Rich, fast-absorbing peptide texture',
+          'Daily morning & evening ritual'
+        ],
+        variants: [
+          { label: 'Buy 1', badge: '', qty: 1, price: 34, compare: 44 },
+          { label: 'Buy 2', badge: 'Popular', qty: 2, price: 59, compare: 88 },
+          { label: 'Buy 3', badge: 'Best Value', qty: 3, price: 82, compare: 132 }
+        ],
+        benefits: [
+          'Volume: 15 ml / 0.5 fl oz compact jar & travel tube',
+          'Texture: Silky, non-greasy cushion cream',
+          'Routine: Suitable for morning and evening skincare'
+        ],
+        howToUse: [
+          'Dispense a pea-sized amount onto your ring finger after cleansing and toning.',
+          'Gently tap along the orbital bone from the inner corner outward without tugging.',
+          'Allow 60 seconds to absorb before layering moisturizer or sunscreen.'
+        ],
+        featuresHeading: 'Features for a fresher-looking eye area',
+        features: [
+          { title: 'Smoother-looking fine lines', copy: 'Cushions dry under-eye creases with lightweight moisture for a refined finish.' },
+          { title: 'Reduced puffiness look', copy: 'Cooling fingertip application helps morning eye contours appear rested.' },
+          { title: 'Temporarily firmer feel', copy: 'Creates a supple, balanced surface that pairs smoothly under concealer.' },
+          { title: 'Compact 15 ml travel size', copy: 'Sleek brushed container fits effortlessly on your vanity or carry-on pouch.' }
+        ],
+        storyOneHeading: 'Simple care for your eye area',
+        storyOneCopy: 'Designed to slot into a calm two-minute morning or evening ritual, the lightweight Korean cream absorbs without heaviness or white cast—leaving skin soft, comfortable, and prepped for the day.',
+        ritualHeading: 'Focused care. Practical design.',
+        ritualSteps: [
+          'Start with clean, dry under-eye skin after your regular cleanser.',
+          'Tap a grain-of-rice amount gently from inner to outer corner.',
+          'Let the silky cream settle for 60 seconds before applying SPF or makeup.'
+        ],
+        faqs: [
+          { q: 'Can I wear Dr. Melaxin Eyephalt Eye Cream under makeup?', a: 'Yes. Use a thin, tapped layer and allow 60 seconds for full absorption before applying concealer or foundation.' },
+          { q: 'How often should I apply it?', a: 'It is designed for daily use in both morning and evening skincare routines.' },
+          { q: 'What size is included?', a: 'Each standard unit provides 15 ml (0.5 fl oz), enough for weeks of consistent under-eye application.' }
+        ]
+      },
+      'turmeric-pads': {
+        key: 'turmeric-pads',
+        handle: 'turmeric-acid-cleaning-pads',
+        title: 'Turmeric Acid Cleaning Pads',
+        tagline: 'Dual-Sided Brightening Pads',
+        subtitle: 'Dual-textured daily brightening cleansing pads',
+        description: 'Pre-soaked cotton pads infused with turmeric root extract and gentle exfoliating acids to lift surface residue and refresh dull skin texture in one quick swipe.',
+        images: [
+          {{ 'product_turmeric_pads.jpg' | asset_url | json }},
+          {{ 'video_turmeric_pads.jpg' | asset_url | json }},
+          {{ 'product_turmeric_pads.jpg' | asset_url | json }}
+        ],
+        reel: {{ 'demo_turmeric_pads.webp' | asset_url | json }},
+        poster: {{ 'video_turmeric_pads.jpg' | asset_url | json }},
+        videoTitle: 'Pad Texture & Cleansing Routine',
+        walkSteps: [
+          'Textured cotton pad sweep across cheek',
+          'Embossed botanical turmeric pad weave',
+          'Refreshed, balanced skin prep'
+        ],
+        variants: [
+          { label: 'Buy 1 (60 Pads)', badge: '', qty: 1, price: 26, compare: 34 },
+          { label: 'Buy 2 (120 Pads)', badge: 'Popular', qty: 2, price: 46, compare: 68 },
+          { label: 'Buy 3 (180 Pads)', badge: 'Best Value', qty: 3, price: 64, compare: 102 }
+        ],
+        benefits: [
+          'Count: 60 pre-soaked dual-sided cotton pads (150 ml)',
+          'Key Botanical: Curcuma Longa (Turmeric) Root Extract',
+          'Sealed screw-top jar preserves pad saturation'
+        ],
+        howToUse: [
+          'After washing your face, take one pre-soaked pad from the sealed jar.',
+          'Sweep the embossed textured side across cheeks, forehead, and T-zone, avoiding eyes.',
+          'Flip to the smooth side to gently pat remaining essence into the skin.'
+        ],
+        featuresHeading: 'Features for clear, refreshed daily prep',
+        features: [
+          { title: 'Dual-textured cotton weave', copy: 'Embossed side lifts surface buildup while the smooth side calms and hydrates.' },
+          { title: 'Botanical turmeric essence', copy: 'Saturated in golden turmeric extract for an even, refreshed-looking glow.' },
+          { title: 'Zero-mess single-step prep', copy: 'Pre-dosed pads eliminate dripping toners or wasted cotton rounds.' },
+          { title: 'Generous 60-pad jar', copy: 'Designed for up to two months of consistent evening or morning toning.' }
+        ],
+        storyOneHeading: 'Effortless daily exfoliation & toning',
+        storyOneCopy: 'Each round pad is saturated evenly so the first pad feels just as fresh as the last—giving you quick, controlled toning before serums and moisturizers.',
+        ritualHeading: 'Gentle polish. Balanced finish.',
+        ritualSteps: [
+          'Open the airtight lid and lift one textured cotton pad.',
+          'Glide softly across clean cheeks, nose, and chin.',
+          'Follow with moisturizer and daytime broad-spectrum SPF.'
+        ],
+        faqs: [
+          { q: 'Are the pads pre-soaked?', a: 'Yes. All 60 cotton pads arrive immersed in 150 ml of turmeric acid toning essence inside a sealed amber jar.' },
+          { q: 'Can sensitive skin types use them?', a: 'We recommend starting 2–3 evenings per week and adjusting frequency based on how your skin responds.' }
+        ]
+      },
+      'peel-spray': {
+        key: 'peel-spray',
+        handle: 'dr-melaxin-peel-shot-kojic-acid-spray',
+        title: 'Dr. Melaxin Peel Shot Kojic Acid Spray',
+        tagline: 'Fine-Mist Kojic Resurfacing',
+        subtitle: 'Fine-mist kojic acid resurfacing spray',
+        description: 'An ultra-fine resurfacing mist combining kojic acid and mild botanical exfoliants for even, hands-free coverage on face or body areas needing gentle brightening care.',
+        images: [
+          {{ 'product_peel_spray.jpg' | asset_url | json }},
+          {{ 'video_peel_spray.jpg' | asset_url | json }},
+          {{ 'product_peel_spray.jpg' | asset_url | json }}
+        ],
+        reel: {{ 'demo_peel_spray.webp' | asset_url | json }},
+        poster: {{ 'video_peel_spray.jpg' | asset_url | json }},
+        videoTitle: 'Fine-Mist Spray Demonstration',
+        walkSteps: [
+          'Ultra-fine mist dispersion',
+          'Clinical frosted glass atomizer',
+          'Even, weightless application'
+        ],
+        variants: [
+          { label: 'Buy 1 (100 ml)', badge: '', qty: 1, price: 38, compare: 48 },
+          { label: 'Buy 2 (200 ml)', badge: 'Popular', qty: 2, price: 68, compare: 96 },
+          { label: 'Buy 3 (300 ml)', badge: 'Best Value', qty: 3, price: 94, compare: 144 }
+        ],
+        benefits: [
+          'Volume: 100 ml / 3.4 fl oz frosted bottle',
+          'Nozzle: Precision micro-droplet mist pump',
+          'Always pair daytime use with broad-spectrum SPF'
+        ],
+        howToUse: [
+          'Shake gently and hold the nozzle 15–20 cm away from clean, dry skin.',
+          'Close eyes and mist 2–3 even sprays across target areas.',
+          'Massage lightly or rinse as directed on the bottle, then apply moisturizer.'
+        ],
+        featuresHeading: 'Features for even, radiant-looking skin',
+        features: [
+          { title: 'Micro-droplet mist nozzle', copy: 'Disperses an ultra-fine cloud for uniform coverage without harsh rubbing.' },
+          { title: 'Kojic acid formula', copy: 'Targeted brightening support designed for uneven surface tone.' },
+          { title: 'Quick hands-free spray', copy: 'Covers face, neck, and hard-to-reach areas in seconds.' },
+          { title: 'Clean frosted glass bottle', copy: 'Protects formula stability with a lockable travel-friendly cap.' }
+        ],
+        storyOneHeading: 'Weightless mist. Targeted clarity.',
+        storyOneCopy: 'Skip thick, sticky peel gels. This micro-mist atomizer distributes product evenly across skin contours so every application feels clean, fast, and controlled.',
+        ritualHeading: 'Spray. Wait. Hydrate.',
+        ritualSteps: [
+          'Cleanse skin thoroughly and pat dry with a soft towel.',
+          'Close eyes and spray 2–3 pumps from 15–20 cm away.',
+          'Follow with your soothing barrier moisturizer and morning SPF.'
+        ],
+        faqs: [
+          { q: 'Should I shake the bottle before spraying?', a: 'Yes, a gentle shake ensures the botanical and kojic ingredients disperse evenly through the micro-mist pump.' },
+          { q: 'Can I use it with other exfoliants?', a: 'Avoid layering multiple strong acid peels in the same routine; alternate evenings and moisturize well.' }
+        ]
+      },
+      'anti-snore': {
+        key: 'anti-snore',
+        handle: 'anti-snore-mouth-piece',
+        title: 'Anti Snore Mouth-Piece',
+        tagline: 'Ergonomic Sleep Wellness',
+        subtitle: 'Ergonomic moldable sleep mouthpiece with travel case',
+        description: 'Crafted from soft, BPA-free medical-grade thermoplastic silicone, the Anti Snore Mouth-Piece features a central breathing airway channel and custom boil-and-bite fitting.',
+        images: [
+          {{ 'product_sleep_mouthpiece.jpg' | asset_url | json }},
+          {{ 'video_sleep_mouthpiece.jpg' | asset_url | json }},
+          {{ 'product_sleep_mouthpiece.jpg' | asset_url | json }}
+        ],
+        reel: {{ 'demo_sleep_mouthpiece.webp' | asset_url | json }},
+        poster: {{ 'video_sleep_mouthpiece.jpg' | asset_url | json }},
+        videoTitle: 'Fit, Material & Nighttime Case',
+        walkSteps: [
+          'Bedside setup with ventilated storage case',
+          'Soft BPA-free ergonomic silicone contour',
+          'Custom-molded fit for restful nights'
+        ],
+        variants: [
+          { label: 'Buy 1 + Travel Case', badge: '', qty: 1, price: 29, compare: 39 },
+          { label: 'Buy 2 + Dual Cases', badge: 'Popular', qty: 2, price: 49, compare: 78 },
+          { label: 'Buy 3 + 3 Cases', badge: 'Best Value', qty: 3, price: 69, compare: 117 }
+        ],
+        benefits: [
+          'Material: BPA-free & latex-free medical-grade silicone',
+          'Includes: 1 Mouth-Piece + Matte Ventilated Storage Case',
+          'Airway Channel: Dual-vented center port for natural breathing'
+        ],
+        howToUse: [
+          'Warm briefly in water according to the included fitting card until pliable.',
+          'Seat gently over upper and lower teeth to form a comfortable personal impression.',
+          'Rinse with cool water each morning and store inside the ventilated matte case.'
+        ],
+        featuresHeading: 'Features for calmer, comfortable nights',
+        features: [
+          { title: 'Custom boil-and-bite fit', copy: 'Molds smoothly to your individual dental contour in minutes at home.' },
+          { title: 'Soft medical-grade silicone', copy: 'BPA-free, latex-free flexible material cushions gently through the night.' },
+          { title: 'Central airflow channel', copy: 'Open front breathing vent supports comfortable nasal or mouth breathing.' },
+          { title: 'Hygienic matte travel case', copy: 'Compact ventilated case keeps your mouthpiece clean at home or away.' }
+        ],
+        storyOneHeading: 'Quiet comfort built for everyday sleep',
+        storyOneCopy: 'Engineered to stay low-profile and unobtrusive, the smooth rounded edges eliminate bulky hardware so you can settle into sleep comfortably.',
+        ritualHeading: 'Mold once. Rest easy.',
+        ritualSteps: [
+          'Soften briefly in warm water as instructed on the fitting guide.',
+          'Bite gently for 30 seconds to lock in your custom dental impression.',
+          'Rinse clean after each night and keep protected in the matte case.'
+        ],
+        faqs: [
+          { q: 'Can I re-mold the mouthpiece if the first fit feels loose?', a: 'Yes, it can be gently re-warmed and molded again following the fitting instructions for a snug, comfortable seat.' },
+          { q: 'Does it include a storage case?', a: 'Every Anti Snore Mouth-Piece ships with a dedicated matte white hygienic travel case.' }
+        ]
+      }
+    };
+
+    const mount = document.getElementById('FabQuickLanding');
+    const mainContent = document.getElementById('MainContent');
+    const bagOverlay = document.getElementById('FabBagOverlay');
+    const bagBody = document.querySelector('[data-fbg-body]');
+    const bagSub = document.querySelector('[data-fbg-sub]');
+    const bagFoot = document.querySelector('[data-fbg-foot]');
+    const bagSubtotal = document.querySelector('[data-fbg-subtotal]');
+    if (!mount || !mainContent) return;
+
+    const STORAGE_KEY = 'fabaddons_bag_v1';
+    let bagItems = [];
+    try {
+      bagItems = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
+    } catch (_e) {
+      bagItems = [];
+    }
+
+    const saveBag = () => {
+      try { localStorage.setItem(STORAGE_KEY, JSON.stringify(bagItems)); } catch (_e) {}
+      const totalCount = bagItems.reduce((s, it) => s + it.qty, 0);
+      document.querySelectorAll('[data-cart-count]').forEach((el) => {
+        el.textContent = String(totalCount);
+      });
+    };
+
+    const renderBag = () => {
+      if (!bagBody || !bagSub || !bagFoot || !bagSubtotal) return;
+      const totalCount = bagItems.reduce((s, it) => s + it.qty, 0);
+      const subtotal = bagItems.reduce((s, it) => s + it.price * it.qty, 0);
+      bagSub.textContent = `${totalCount} ${totalCount === 1 ? 'item' : 'items'} in your bag`;
+      bagBody.innerHTML = '';
+      if (!bagItems.length) {
+        const empty = document.createElement('div');
+        empty.className = 'fbg-empty';
+        empty.textContent = 'Your bag is currently empty. Choose any product to add items.';
+        bagBody.appendChild(empty);
+        bagFoot.hidden = true;
+        return;
+      }
+      bagFoot.hidden = false;
+      bagSubtotal.textContent = `$${subtotal.toFixed(2)}`;
+      bagItems.forEach((it, idx) => {
+        const row = document.createElement('div');
+        row.className = 'fbg-item';
+        const img = document.createElement('img');
+        img.src = it.image;
+        img.width = 72;
+        img.height = 72;
+        img.alt = it.title;
+        img.className = 'fbg-item-img';
+        const info = document.createElement('div');
+        const h = document.createElement('p');
+        h.className = 'fbg-item-title';
+        h.textContent = it.title;
+        const m = document.createElement('p');
+        m.className = 'fbg-item-meta';
+        m.textContent = `${it.label} — $${it.price.toFixed(2)}`;
+        const bar = document.createElement('div');
+        bar.className = 'fbg-qty-bar';
+        const ctrl = document.createElement('div');
+        ctrl.className = 'fbg-qty-ctrl';
+        const dec = document.createElement('button');
+        dec.type = 'button';
+        dec.textContent = '−';
+        dec.addEventListener('click', () => {
+          bagItems[idx].qty -= 1;
+          if (bagItems[idx].qty <= 0) bagItems.splice(idx, 1);
+          saveBag();
+          renderBag();
+        });
+        const qtySpan = document.createElement('span');
+        qtySpan.textContent = String(it.qty);
+        const inc = document.createElement('button');
+        inc.type = 'button';
+        inc.textContent = '+';
+        inc.addEventListener('click', () => {
+          bagItems[idx].qty += 1;
+          saveBag();
+          renderBag();
+        });
+        ctrl.append(dec, qtySpan, inc);
+        const rm = document.createElement('button');
+        rm.type = 'button';
+        rm.className = 'fbg-rm';
+        rm.textContent = 'Remove';
+        rm.addEventListener('click', () => {
+          bagItems.splice(idx, 1);
+          saveBag();
+          renderBag();
+        });
+        bar.append(ctrl, rm);
+        info.append(h, m, bar);
+        row.append(img, info);
+        bagBody.appendChild(row);
+      });
+    };
+
+    const openBag = () => {
+      renderBag();
+      if (bagOverlay) bagOverlay.hidden = false;
+    };
+    const closeBag = () => {
+      if (bagOverlay) bagOverlay.hidden = true;
+    };
+
+    document.querySelectorAll('[data-fbg-close]').forEach((el) => el.addEventListener('click', closeBag));
+    bagOverlay?.addEventListener('click', (e) => {
+      if (e.target === bagOverlay) closeBag();
+    });
+
+    const addToShopifyOrBag = async (product, variant) => {
+      bagItems.push({
+        key: product.key,
+        title: product.title,
+        label: variant.label,
+        price: variant.price,
+        qty: 1,
+        image: product.images[0]
+      });
+      saveBag();
+      openBag();
+
+      try {
+        const rootUrl = (window.Shopify && window.Shopify.routes && window.Shopify.routes.root) || '/';
+        const res = await fetch(`${rootUrl}products/${product.handle}.js`);
+        if (res.ok) {
+          const shopProd = await res.json();
+          const firstVar = shopProd.variants && shopProd.variants[0];
+          if (firstVar) {
+            await fetch(`${rootUrl}cart/add.js`, {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ id: firstVar.id, quantity: variant.qty })
+            });
+          }
+        }
+      } catch (_e) {}
+    };
+
+    const getRootUrl = () => (window.Shopify && window.Shopify.routes && window.Shopify.routes.root) || '/';
+    const isHomePath = () => location.pathname === getRootUrl();
+
+    const closeProductLanding = (scrollTarget) => {
+      if (!isHomePath()) {
+        window.location.href = getRootUrl() + (scrollTarget || '');
+        return;
+      }
+      mount.hidden = true;
+      mount.innerHTML = '';
+      Array.from(mainContent.children).forEach((child) => {
+        if (child !== mount) child.hidden = false;
+      });
+      if (location.hash.startsWith('#fab-product=')) {
+        history.replaceState(null, '', location.pathname + location.search);
+      }
+      if (scrollTarget) {
+        setTimeout(() => {
+          document.querySelector(scrollTarget)?.scrollIntoView({ behavior: 'smooth' });
+        }, 40);
+      } else {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      }
+    };
+
+    const openProductLanding = (key) => {
+      const p = CATALOG[key] || CATALOG['eye-cream'];
+      let slideIdx = 0;
+      let selectedVarIdx = 0;
+      let reelPaused = false;
+
+      const others = Object.values(CATALOG).filter((item) => item.key !== p.key);
+      const calcSave = (v) => Math.round(((v.compare - v.price) / v.compare) * 100);
+
+      mount.innerHTML = `
+        <div class="fp-container fp-top-bar">
+          <nav class="fp-breadcrumb" aria-label="Breadcrumb">
+            <button type="button" data-fql-home>Home</button>
+            <span aria-hidden="true">/</span>
+            <button type="button" data-fql-home="#bestsellers">Shop</button>
+            <span aria-hidden="true">/</span>
+            <span class="fp-crumb-current"></span>
+          </nav>
+          <button type="button" class="fp-back-link" data-fql-home>&larr; Back to Storefront</button>
+        </div>
+
+        <section id="fql-buy-box" class="fp-container fp-buy-section">
+          <div class="fp-main">
+            <div class="fp-gallery-col">
+              <div class="fp-stage">
+                <img src="${p.images[0]}" width="1000" height="1000" alt="${p.title}" class="fp-main-img" data-fql-main-img>
+                <button type="button" class="fp-gal-arrow fp-gal-prev" data-fql-gprev aria-label="Previous product image">&#8249;</button>
+                <button type="button" class="fp-gal-arrow fp-gal-next" data-fql-gnext aria-label="Next product image">&#8250;</button>
+              </div>
+              <div class="fp-thumbs">
+                ${p.images.map((src, i) => `
+                  <button type="button" class="fp-thumb ${i === 0 ? 'is-active' : ''}" data-fql-thumb="${i}">
+                    <img src="${src}" width="400" height="300" alt="${p.title} view ${i + 1}" loading="lazy">
+                  </button>
+                `).join('')}
+              </div>
+            </div>
+
+            <div class="fp-info">
+              <span class="fp-tagline"></span>
+              <h1 class="fp-title"></h1>
+              <p class="fp-subtitle"></p>
+              <div class="fp-price-line">
+                <span class="fp-price" data-fql-price></span>
+                <s class="fp-compare" data-fql-compare></s>
+                <span class="fp-save-pill" data-fql-save></span>
+              </div>
+              <p class="fp-desc"></p>
+
+              <p class="fp-qty-heading">Choose Quantity</p>
+              <div class="fp-packs">
+                ${p.variants.map((v, idx) => `
+                  <button type="button" class="fp-pack ${idx === 0 ? 'is-selected' : ''}" data-fql-pack="${idx}">
+                    <span class="fp-pack-left">
+                      <span class="fp-radio-dot"></span>
+                      <strong>${v.label}</strong>
+                      ${v.badge ? `<span class="fp-pack-badge">&middot; ${v.badge}</span>` : ''}
+                    </span>
+                    <span class="fp-pack-right">
+                      <strong>$${v.price.toFixed(2)}</strong>
+                      <span>Save ${calcSave(v)}%</span>
+                    </span>
+                  </button>
+                `).join('')}
+              </div>
+
+              <div class="fp-total-row">
+                <span>Total</span>
+                <strong data-fql-total></strong>
+              </div>
+              <button type="button" class="fp-add-btn" data-fql-add>Add to cart &rarr;</button>
+
+              <div class="fp-accordions">
+                <details class="fp-acc-item" open>
+                  <summary class="fp-acc-trigger">Benefits &amp; Overview</summary>
+                  <ul class="fp-acc-list">${p.benefits.map((b) => `<li>${b}</li>`).join('')}</ul>
+                </details>
+                <details class="fp-acc-item">
+                  <summary class="fp-acc-trigger">How to Use</summary>
+                  <ol class="fp-acc-steps">${p.howToUse.map((s) => `<li>${s}</li>`).join('')}</ol>
+                </details>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section class="fp-walkthrough">
+          <div class="fp-walk-container">
+            <div class="fp-walk-head">
+              <h2 class="fp-serif-center">See It In Action</h2>
+              <p class="fp-muted-center">${p.videoTitle}</p>
+            </div>
+            <div class="fp-walk-grid">
+              <div class="fp-reel-box">
+                <img src="${p.reel}" width="360" height="640" alt="${p.title} demonstration" class="fp-reel-fg" data-fql-reel>
+                <div class="fp-reel-scrim"></div>
+                <div class="fp-reel-top">
+                  <button type="button" class="fp-reel-btn" data-fql-rplay>Pause</button>
+                </div>
+                <div class="fp-reel-caption">
+                  <p class="fp-reel-step-caption" data-fql-wcap>01 &middot; ${p.walkSteps[0]}</p>
+                  <p class="fp-reel-title">${p.title}</p>
+                </div>
+              </div>
+              <div>
+                <span class="fp-eyebrow">APPLICATION WALKTHROUGH</span>
+                <h3 class="fp-serif">${p.ritualHeading}</h3>
+                <p class="fp-muted">${p.description}</p>
+                <div class="fp-step-tabs">
+                  ${p.walkSteps.map((st, idx) => `
+                    <button type="button" class="fp-step-tab ${idx === 0 ? 'is-active' : ''}" data-fql-step="${idx}">
+                      <span class="fp-step-label">Step ${idx + 1}</span>
+                      <span class="fp-step-text">${st}</span>
+                    </button>
+                  `).join('')}
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section class="fp-comparison">
+          <div class="fp-container fp-split">
+            <div>
+              <span class="fp-eyebrow">DAILY CONSISTENCY</span>
+              <h2 class="fp-serif">Before &amp; after</h2>
+              <p class="fp-muted">Slide to compare packaging prep and real skin/routine texture. Gentle daily application supports comfort, hydration, and clean prep without exaggerated claims.</p>
+              <button type="button" class="fp-shop-link" data-fql-buybox>Shop this product &rarr;</button>
+            </div>
+            <div>
+              <div class="fp-ba-slider-box">
+                <img src="${p.images[2]}" width="800" height="600" alt="In Routine" class="fp-ba-full">
+                <div class="fp-ba-overlay" data-fql-ba-over>
+                  <img src="${p.images[0]}" width="800" height="600" alt="Product Prep" class="fp-ba-full">
+                </div>
+                <div class="fp-ba-divider" data-fql-ba-div></div>
+                <span class="fp-ba-tag fp-ba-left">Product Prep</span>
+                <span class="fp-ba-tag fp-ba-right">In Routine</span>
+              </div>
+              <input type="range" min="10" max="90" value="50" class="fp-ba-range" data-fql-ba-range aria-label="Compare product preparation and routine view">
+            </div>
+          </div>
+        </section>
+
+        <section>
+          <div class="fp-wave-banner">
+            <span class="fp-wave-eyebrow">THOUGHTFUL FORMULATION</span>
+            <h2 class="fp-wave-title">${p.featuresHeading}</h2>
+            <svg viewBox="0 0 1440 60" preserveAspectRatio="none" class="fp-wave-svg" aria-hidden="true">
+              <path d="M0,32 C360,64 1080,0 1440,32 L1440,60 L0,60 Z"></path>
+            </svg>
+          </div>
+          <div class="fp-container fp-features-grid">
+            ${p.features.map((f, idx) => `
+              <div class="fp-feature-card">
+                <span class="fp-step-badge">${idx + 1}</span>
+                <h3>${f.title}</h3>
+                <p>${f.copy}</p>
+              </div>
+            `).join('')}
+          </div>
+        </section>
+
+        <section class="fp-story-one">
+          <div class="fp-container fp-split">
+            <div>
+              <span class="fp-eyebrow">EVERYDAY CARE</span>
+              <h2 class="fp-serif">${p.storyOneHeading}</h2>
+              <p class="fp-muted">${p.storyOneCopy}</p>
+            </div>
+            <div class="fp-story-img-wrap">
+              <img src="${p.images[0]}" width="800" height="600" alt="${p.title}" class="fp-story-img">
+            </div>
+          </div>
+        </section>
+
+        <section class="fp-story-two">
+          <div class="fp-container fp-split">
+            <div class="fp-story-img-wrap">
+              <img src="${p.images[2]}" width="800" height="600" alt="${p.title} routine" class="fp-story-img">
+            </div>
+            <div>
+              <span class="fp-eyebrow">SIMPLE 3-STEP RITUAL</span>
+              <h2 class="fp-serif">${p.ritualHeading}</h2>
+              <ol class="fp-ritual-list">
+                ${p.ritualSteps.map((rs, idx) => `<li><span class="fp-ritual-num">${idx + 1}</span><span>${rs}</span></li>`).join('')}
+              </ol>
+            </div>
+          </div>
+        </section>
+
+        <section class="fp-cross-sell">
+          <div class="fp-container">
+            <div class="fp-walk-head">
+              <span class="fp-eyebrow">COMPLETE YOUR ROUTINE</span>
+              <h2 class="fp-serif-center">A closer look at fabaddons essentials</h2>
+            </div>
+            <div class="fp-cross-grid">
+              ${others.map((o) => `
+                <button type="button" class="fp-cross-card" data-fab-product="${o.key}">
+                  <div class="fp-cross-media">
+                    <img src="${o.images[0]}" width="800" height="600" alt="${o.title}" class="fp-cross-img">
+                  </div>
+                  <div class="fp-cross-body">
+                    <strong>${o.title}</strong>
+                    <span>$${o.variants[0].price.toFixed(2)}</span>
+                  </div>
+                </button>
+              `).join('')}
+            </div>
+          </div>
+        </section>
+
+        <section class="fp-faq-wrap">
+          <div class="fp-faq-grid">
+            <div>
+              <span class="fp-eyebrow">PRODUCT QUESTIONS</span>
+              <h2 class="fp-serif">Answers to your questions</h2>
+              <p class="fp-muted">Common questions about ${p.title}.</p>
+            </div>
+            <div class="fp-faq-list">
+              ${p.faqs.map((fq, idx) => `
+                <details class="fp-faq-item" ${idx === 0 ? 'open' : ''}>
+                  <summary class="fp-faq-q">${fq.q}</summary>
+                  <div class="fp-faq-a">${fq.a}</div>
+                </details>
+              `).join('')}
+            </div>
+          </div>
+        </section>
+      `;
+
+      mount.querySelector('.fp-crumb-current').textContent = p.title;
+      mount.querySelector('.fp-tagline').textContent = p.tagline;
+      mount.querySelector('.fp-title').textContent = p.title;
+      mount.querySelector('.fp-subtitle').textContent = p.subtitle;
+      mount.querySelector('.fp-desc').textContent = p.description;
+
+      const updatePricing = () => {
+        const v = p.variants[selectedVarIdx];
+        mount.querySelector('[data-fql-price]').textContent = `$${v.price.toFixed(2)}`;
+        mount.querySelector('[data-fql-compare]').textContent = `$${v.compare.toFixed(2)}`;
+        mount.querySelector('[data-fql-save]').textContent = `Save ${calcSave(v)}%`;
+        mount.querySelector('[data-fql-total]').textContent = `$${v.price.toFixed(2)}`;
+      };
+      updatePricing();
+
+      const mainImg = mount.querySelector('[data-fql-main-img]');
+      const thumbBtns = Array.from(mount.querySelectorAll('[data-fql-thumb]'));
+      const setSlide = (next) => {
+        slideIdx = (next + p.images.length) % p.images.length;
+        mainImg.src = p.images[slideIdx];
+        thumbBtns.forEach((b, i) => b.classList.toggle('is-active', i === slideIdx));
+      };
+      thumbBtns.forEach((b, i) => b.addEventListener('click', () => setSlide(i)));
+      mount.querySelector('[data-fql-gprev]').addEventListener('click', () => setSlide(slideIdx - 1));
+      mount.querySelector('[data-fql-gnext]').addEventListener('click', () => setSlide(slideIdx + 1));
+
+      const packBtns = Array.from(mount.querySelectorAll('[data-fql-pack]'));
+      packBtns.forEach((b, i) => {
+        b.addEventListener('click', () => {
+          selectedVarIdx = i;
+          packBtns.forEach((el, j) => el.classList.toggle('is-selected', j === i));
+          updatePricing();
+        });
+      });
+
+      mount.querySelector('[data-fql-add]').addEventListener('click', () => {
+        addToShopifyOrBag(p, p.variants[selectedVarIdx]);
+      });
+
+      const stepBtns = Array.from(mount.querySelectorAll('[data-fql-step]'));
+      const wcap = mount.querySelector('[data-fql-wcap]');
+      stepBtns.forEach((b, i) => {
+        b.addEventListener('click', () => {
+          stepBtns.forEach((el, j) => el.classList.toggle('is-active', j === i));
+          wcap.textContent = `0${i + 1} · ${p.walkSteps[i]}`;
+        });
+      });
+
+      const rplay = mount.querySelector('[data-fql-rplay]');
+      const reelEl = mount.querySelector('[data-fql-reel]');
+      rplay.addEventListener('click', () => {
+        reelPaused = !reelPaused;
+        reelEl.src = reelPaused ? p.poster : p.reel;
+        rplay.textContent = reelPaused ? 'Play' : 'Pause';
+      });
+
+      const baRange = mount.querySelector('[data-fql-ba-range]');
+      const baOver = mount.querySelector('[data-fql-ba-over]');
+      const baDiv = mount.querySelector('[data-fql-ba-div]');
+      baRange.addEventListener('input', () => {
+        const val = Number(baRange.value) || 50;
+        baOver.style.clipPath = `inset(0 ${100 - val}% 0 0)`;
+        baDiv.style.left = `${val}%`;
+      });
+
+      mount.querySelectorAll('[data-fql-home]').forEach((b) => {
+        b.addEventListener('click', () => closeProductLanding(b.getAttribute('data-fql-home') || ''));
+      });
+      mount.querySelector('[data-fql-buybox]').addEventListener('click', () => {
+        mount.querySelector('#fql-buy-box')?.scrollIntoView({ behavior: 'smooth' });
+      });
+
+      Array.from(mainContent.children).forEach((child) => {
+        if (child !== mount) child.hidden = true;
+      });
+      mount.hidden = false;
+      history.replaceState(null, '', '#fab-product=' + p.key);
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    };
+
+    document.addEventListener('click', (e) => {
+      const prodTrigger = e.target.closest('[data-fab-product]');
+      if (prodTrigger) {
+        e.preventDefault();
+        openProductLanding(prodTrigger.getAttribute('data-fab-product'));
+        return;
+      }
+      const bagTrigger = e.target.closest('[data-fab-open-bag]');
+      if (bagTrigger) {
+        e.preventDefault();
+        openBag();
+        return;
+      }
+      const homeTrigger = e.target.closest('[data-fab-home-link]');
+      if (homeTrigger && !mount.hidden && isHomePath()) {
+        e.preventDefault();
+        const anchor = homeTrigger.getAttribute('data-fab-anchor') || '';
+        closeProductLanding(anchor);
+      }
+    });
+
+    window.addEventListener('hashchange', () => {
+      if (location.hash.startsWith('#fab-product=')) {
+        openProductLanding(location.hash.replace('#fab-product=', ''));
+      } else if (!mount.hidden) {
+        closeProductLanding(location.hash || '');
+      }
+    });
+
+    saveBag();
+    if (location.hash.startsWith('#fab-product=')) {
+      openProductLanding(location.hash.replace('#fab-product=', ''));
+    }
+  })();
+</script>

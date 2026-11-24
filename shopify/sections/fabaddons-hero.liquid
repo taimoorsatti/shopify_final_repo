@@ -25,9 +25,26 @@
               <p class="fab-hero-subtext">{{ block.settings.subtext | escape }}</p>
             {% endif %}
             {% if block.settings.cta_label != blank %}
-              <a href="{{ block.settings.cta_link | default: routes.all_products_collection_url }}" class="fab-hero-cta">
-                {{ block.settings.cta_label | escape }}
-              </a>
+              {% if block.settings.cta_link != blank %}
+                <a href="{{ block.settings.cta_link }}" class="fab-hero-cta">
+                  {{ block.settings.cta_label | escape }}
+                </a>
+              {% else %}
+                {% assign hero_eyebrow_lc = block.settings.eyebrow | downcase %}
+                {% if hero_eyebrow_lc contains 'wellness' %}
+                  <a href="{{ routes.root_url }}#fab-product=anti-snore" data-fab-product="anti-snore" class="fab-hero-cta">
+                    {{ block.settings.cta_label | escape }}
+                  </a>
+                {% elsif hero_eyebrow_lc contains 'elevated' %}
+                  <a href="{{ routes.root_url }}#bestsellers" data-fab-home-link data-fab-anchor="#bestsellers" class="fab-hero-cta">
+                    {{ block.settings.cta_label | escape }}
+                  </a>
+                {% else %}
+                  <a href="{{ routes.root_url }}#fab-product=eye-cream" data-fab-product="eye-cream" class="fab-hero-cta">
+                    {{ block.settings.cta_label | escape }}
+                  </a>
+                {% endif %}
+              {% endif %}
             {% endif %}
           </div>
         </div>

@@ -78,7 +78,20 @@
                     {% endif %}
                   </span>
                 </div>
-                <a href="{{ product.url | default: routes.all_products_collection_url }}" class="fab-shop-btn">Shop</a>
+                {% if product != blank %}
+                  <a href="{{ product.url }}" class="fab-shop-btn">Shop</a>
+                {% else %}
+                  {% assign fab_vkey = 'eye-cream' %}
+                  {% assign vlabel_lc = block.settings.custom_label | downcase %}
+                  {% if vlabel_lc contains 'turmeric' %}
+                    {% assign fab_vkey = 'turmeric-pads' %}
+                  {% elsif vlabel_lc contains 'peel' or vlabel_lc contains 'kojic' %}
+                    {% assign fab_vkey = 'peel-spray' %}
+                  {% elsif vlabel_lc contains 'snore' or vlabel_lc contains 'mouth' %}
+                    {% assign fab_vkey = 'anti-snore' %}
+                  {% endif %}
+                  <a href="{{ routes.root_url }}#fab-product={{ fab_vkey }}" data-fab-product="{{ fab_vkey }}" class="fab-shop-btn">Shop</a>
+                {% endif %}
               </div>
             </div>
           {% endfor %}

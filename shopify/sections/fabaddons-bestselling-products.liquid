@@ -43,7 +43,16 @@
                 </div>
               </a>
             {% else %}
-              <a href="{{ routes.all_products_collection_url }}" class="fab-product-card" {{ block.shopify_attributes }}>
+              {% assign fab_key = 'eye-cream' %}
+              {% assign title_lc = block.settings.fallback_title | downcase %}
+              {% if title_lc contains 'turmeric' %}
+                {% assign fab_key = 'turmeric-pads' %}
+              {% elsif title_lc contains 'peel' or title_lc contains 'kojic' %}
+                {% assign fab_key = 'peel-spray' %}
+              {% elsif title_lc contains 'snore' or title_lc contains 'mouth' %}
+                {% assign fab_key = 'anti-snore' %}
+              {% endif %}
+              <a href="{{ routes.root_url }}#fab-product={{ fab_key }}" data-fab-product="{{ fab_key }}" class="fab-product-card" {{ block.shopify_attributes }}>
                 <div class="fab-card-media">
                   {% if block.settings.fallback_asset != blank %}
                     <img src="{{ block.settings.fallback_asset | asset_url }}" width="900" height="675" alt="{{ block.settings.fallback_title | escape }}" class="fab-card-img" loading="lazy">
@@ -77,9 +86,11 @@
 
     {% if section.settings.cta_label != blank %}
       <div class="fab-cta-wrap">
-        <a href="{{ section.settings.cta_url | default: routes.all_products_collection_url }}" class="fab-black-btn">
-          {{ section.settings.cta_label | escape }}
-        </a>
+        {% if section.settings.cta_url != blank %}
+          <a href="{{ section.settings.cta_url }}" class="fab-black-btn">{{ section.settings.cta_label | escape }}</a>
+        {% else %}
+          <a href="{{ routes.root_url }}#fab-product=eye-cream" data-fab-product="eye-cream" class="fab-black-btn">{{ section.settings.cta_label | escape }}</a>
+        {% endif %}
       </div>
     {% endif %}
   </div>

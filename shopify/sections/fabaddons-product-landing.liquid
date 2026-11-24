@@ -1,194 +1,646 @@
 {% comment %}
-  fabaddons — Premium Product Landing Section (FabProduct layout)
-  Upload to: sections/fabaddons-product-landing.liquid
+  fabaddons — Complete One-Page Product Landing Section
+  Includes: Sticky Gallery + Buy 1/2/3 Packs + Accordions + Application Walkthrough +
+  Before/After Interactive Slider + Blue Wave Features + Everyday Care + 3-Step Ritual + Cross-Sells
 {% endcomment %}
 
-<div id="FabProduct-{{ section.id }}" class="fp-root">
-  <div class="fp-container">
-    <nav class="fp-breadcrumb" aria-label="Breadcrumb">
-      <a href="{{ routes.root_url }}">Home</a> / <a href="{{ routes.all_products_collection_url }}">Shop</a> / <span>{{ product.title }}</span>
-    </nav>
+{% assign display_title = product.title | default: section.settings.fallback_title %}
+{% assign active_variant = product.selected_or_first_available_variant %}
+{% assign unit_price = active_variant.price | default: 3400 %}
+{% assign unit_compare = active_variant.compare_at_price | default: 4400 %}
+{% if unit_compare == blank or unit_compare <= unit_price %}
+  {% assign unit_compare = 4400 %}
+{% endif %}
 
+{% assign pack1_price = unit_price %}
+{% assign pack1_compare = unit_compare %}
+{% assign pack1_save = pack1_compare | minus: pack1_price | times: 100 | divided_by: pack1_compare %}
+
+{% assign pack2_price = unit_price | times: 2 %}
+{% if unit_price == 3400 %}
+  {% assign pack2_price = 5900 %}
+{% endif %}
+{% assign pack2_compare = unit_compare | times: 2 %}
+{% assign pack2_save = pack2_compare | minus: pack2_price | times: 100 | divided_by: pack2_compare %}
+
+{% assign pack3_price = unit_price | times: 3 %}
+{% if unit_price == 3400 %}
+  {% assign pack3_price = 8200 %}
+{% endif %}
+{% assign pack3_compare = unit_compare | times: 3 %}
+{% assign pack3_save = pack3_compare | minus: pack3_price | times: 100 | divided_by: pack3_compare %}
+
+{% assign img1_url = 'product_eye_cream.jpg' | asset_url %}
+{% assign img2_url = 'video_eye_cream.jpg' | asset_url %}
+{% assign img3_url = 'editorial_eye_ritual.jpg' | asset_url %}
+{% if product != blank and product.featured_image != blank %}
+  {% assign img1_url = product.featured_image | image_url: width: 1200 %}
+{% endif %}
+{% if product != blank and product.images.size > 1 %}
+  {% assign img2_url = product.images[1] | image_url: width: 1200 %}
+{% endif %}
+{% if product != blank and product.images.size > 2 %}
+  {% assign img3_url = product.images[2] | image_url: width: 1200 %}
+{% endif %}
+{% assign reel_url = section.settings.fallback_reel_asset | default: 'demo_eye_cream.webp' | asset_url %}
+
+<div id="FabProduct-{{ section.id }}" class="fp-root">
+  <!-- Breadcrumb & Back -->
+  <div class="fp-container fp-top-bar">
+    <nav class="fp-breadcrumb" aria-label="Breadcrumb">
+      <a href="{{ routes.root_url }}">Home</a>
+      <span aria-hidden="true">/</span>
+      <a href="{{ routes.all_products_collection_url }}">Shop</a>
+      <span aria-hidden="true">/</span>
+      <span class="fp-crumb-current">{{ display_title | escape }}</span>
+    </nav>
+    <a href="{{ routes.root_url }}" class="fp-back-link">&larr; Back to Storefront</a>
+  </div>
+
+  <!-- SECTION 1: Main Product Gallery + Pack Selector Buy Box -->
+  <section id="fp-buy-box-{{ section.id }}" class="fp-container fp-buy-section">
     <div class="fp-main">
-      <div class="fp-gallery">
+      <!-- Left Sticky Gallery -->
+      <div class="fp-gallery-col">
         <div class="fp-stage">
-          {% if product.featured_image != blank %}
-            {{ product.featured_image | image_url: width: 1200 | image_tag: class: 'fp-main-img', id: 'fpMainImg', alt: product.title }}
-          {% else %}
-            <img src="{{ 'product_eye_cream.jpg' | asset_url }}" width="900" height="900" id="fpMainImg" alt="{{ product.title | escape }}" class="fp-main-img">
-          {% endif %}
+          <img src="{{ img1_url }}" width="1000" height="1000" id="fpMainImg-{{ section.id }}" alt="{{ display_title | escape }}" class="fp-main-img">
+          <button type="button" class="fp-gal-arrow fp-gal-prev" data-gal-prev aria-label="Previous product image">&#8249;</button>
+          <button type="button" class="fp-gal-arrow fp-gal-next" data-gal-next aria-label="Next product image">&#8250;</button>
         </div>
-        {% if product.images.size > 1 %}
-          <div class="fp-thumbs">
-            {% for image in product.images limit: 4 %}
-              <button type="button" class="fp-thumb" onclick="document.getElementById('fpMainImg').src='{{ image | image_url: width: 1200 }}'">
-                {{ image | image_url: width: 300 | image_tag: alt: product.title }}
-              </button>
-            {% endfor %}
-          </div>
-        {% endif %}
+        <div class="fp-thumbs">
+          <button type="button" class="fp-thumb is-active" data-gal-thumb="0" data-gal-src="{{ img1_url }}">
+            <img src="{{ img1_url }}" width="400" height="300" alt="{{ display_title | escape }} studio view" loading="lazy">
+          </button>
+          <button type="button" class="fp-thumb" data-gal-thumb="1" data-gal-src="{{ img2_url }}">
+            <img src="{{ img2_url }}" width="400" height="300" alt="{{ display_title | escape }} in use" loading="lazy">
+          </button>
+          <button type="button" class="fp-thumb" data-gal-thumb="2" data-gal-src="{{ img3_url }}">
+            <img src="{{ img3_url }}" width="400" height="300" alt="{{ display_title | escape }} closer look" loading="lazy">
+          </button>
+        </div>
       </div>
 
+      <!-- Right Purchase Column -->
       <div class="fp-info">
         {% if section.settings.tagline != blank %}
           <span class="fp-tagline">{{ section.settings.tagline | escape }}</span>
         {% endif %}
-        <h1 class="fp-title">{{ product.title | default: 'Dr. Melaxin Eyephalt Eye Cream' }}</h1>
-
-        {% assign active_price = product.selected_or_first_available_variant.price | default: 3400 %}
-        {% assign active_compare = product.selected_or_first_available_variant.compare_at_price | default: 4400 %}
+        <h1 class="fp-title">{{ display_title | escape }}</h1>
+        {% if section.settings.subtitle != blank %}
+          <p class="fp-subtitle">{{ section.settings.subtitle | escape }}</p>
+        {% endif %}
 
         <div class="fp-price-line">
-          <span class="fp-price">{{ active_price | money }}</span>
-          {% if active_compare > active_price %}
-            <s>{{ active_compare | money }}</s>
-          {% endif %}
+          <span class="fp-price" data-live-price>{{ pack1_price | money }}</span>
+          <s class="fp-compare" data-live-compare>{{ pack1_compare | money }}</s>
+          <span class="fp-save-pill" data-live-save>Save {{ pack1_save }}%</span>
         </div>
 
         <div class="fp-desc">
-          {% if product.description != blank %}
+          {% if product != blank and product.description != blank %}
             {{ product.description }}
           {% else %}
-            <p>Lightweight Korean eye cream formulated for smooth under-eye comfort and morning routine prep.</p>
+            <p>{{ section.settings.fallback_description | escape }}</p>
           {% endif %}
         </div>
 
         {% if product != blank %}
           {% form 'product', product, id: 'FabForm' %}
-            <input type="hidden" name="id" value="{{ product.selected_or_first_available_variant.id }}">
+            <input type="hidden" name="id" value="{{ active_variant.id }}">
+            <input type="hidden" name="quantity" value="1" data-qty-input>
+
+            <p class="fp-qty-heading">Choose Quantity</p>
             <div class="fp-packs">
-              <label class="fp-pack">
-                <input type="radio" name="quantity" value="1" checked>
-                <span>Buy 1</span>
-                <strong>{{ active_price | money }}</strong>
-              </label>
-              <label class="fp-pack">
-                <input type="radio" name="quantity" value="2">
-                <span>Buy 2</span>
-                <strong>{{ active_price | times: 2 | money }}</strong>
-              </label>
-              <label class="fp-pack">
-                <input type="radio" name="quantity" value="3">
-                <span>Buy 3</span>
-                <strong>{{ active_price | times: 3 | money }}</strong>
-              </label>
+              <button type="button" class="fp-pack is-selected" data-pack-qty="1" data-pack-price="{{ pack1_price | money | escape }}" data-pack-compare="{{ pack1_compare | money | escape }}" data-pack-save="Save {{ pack1_save }}%">
+                <span class="fp-pack-left">
+                  <span class="fp-radio-dot"></span>
+                  <strong>Buy 1</strong>
+                </span>
+                <span class="fp-pack-right">
+                  <strong>{{ pack1_price | money }}</strong>
+                  <span>Save {{ pack1_save }}%</span>
+                </span>
+              </button>
+
+              <button type="button" class="fp-pack" data-pack-qty="2" data-pack-price="{{ pack2_price | money | escape }}" data-pack-compare="{{ pack2_compare | money | escape }}" data-pack-save="Save {{ pack2_save }}%">
+                <span class="fp-pack-left">
+                  <span class="fp-radio-dot"></span>
+                  <strong>Buy 2</strong>
+                  <span class="fp-pack-badge">&middot; Popular</span>
+                </span>
+                <span class="fp-pack-right">
+                  <strong>{{ pack2_price | money }}</strong>
+                  <span>Save {{ pack2_save }}%</span>
+                </span>
+              </button>
+
+              <button type="button" class="fp-pack" data-pack-qty="3" data-pack-price="{{ pack3_price | money | escape }}" data-pack-compare="{{ pack3_compare | money | escape }}" data-pack-save="Save {{ pack3_save }}%">
+                <span class="fp-pack-left">
+                  <span class="fp-radio-dot"></span>
+                  <strong>Buy 3</strong>
+                  <span class="fp-pack-badge">&middot; Best Value</span>
+                </span>
+                <span class="fp-pack-right">
+                  <strong>{{ pack3_price | money }}</strong>
+                  <span>Save {{ pack3_save }}%</span>
+                </span>
+              </button>
+            </div>
+
+            <div class="fp-total-row">
+              <span>Total</span>
+              <strong data-live-total>{{ pack1_price | money }}</strong>
             </div>
 
             <button type="submit" class="fp-add-btn">Add to cart &rarr;</button>
           {% endform %}
         {% else %}
-          <div id="FabForm" class="fp-packs">
-            <div class="fp-pack"><span>Buy 1</span><strong>{{ active_price | money }}</strong></div>
-            <div class="fp-pack"><span>Buy 2</span><strong>{{ active_price | times: 2 | money }}</strong></div>
-            <div class="fp-pack"><span>Buy 3</span><strong>{{ active_price | times: 3 | money }}</strong></div>
-            <a href="{{ routes.all_products_collection_url }}" class="fp-add-btn" style="text-align:center;text-decoration:none;display:block;">Shop Collection &rarr;</a>
+          <div id="FabForm">
+            <p class="fp-qty-heading">Choose Quantity</p>
+            <div class="fp-packs">
+              <button type="button" class="fp-pack is-selected" data-pack-qty="1" data-pack-price="$34.00" data-pack-compare="$44.00" data-pack-save="Save 23%">
+                <span class="fp-pack-left">
+                  <span class="fp-radio-dot"></span>
+                  <strong>Buy 1</strong>
+                </span>
+                <span class="fp-pack-right">
+                  <strong>$34.00</strong>
+                  <span>Save 23%</span>
+                </span>
+              </button>
+              <button type="button" class="fp-pack" data-pack-qty="2" data-pack-price="$59.00" data-pack-compare="$88.00" data-pack-save="Save 33%">
+                <span class="fp-pack-left">
+                  <span class="fp-radio-dot"></span>
+                  <strong>Buy 2</strong>
+                  <span class="fp-pack-badge">&middot; Popular</span>
+                </span>
+                <span class="fp-pack-right">
+                  <strong>$59.00</strong>
+                  <span>Save 33%</span>
+                </span>
+              </button>
+              <button type="button" class="fp-pack" data-pack-qty="3" data-pack-price="$82.00" data-pack-compare="$132.00" data-pack-save="Save 38%">
+                <span class="fp-pack-left">
+                  <span class="fp-radio-dot"></span>
+                  <strong>Buy 3</strong>
+                  <span class="fp-pack-badge">&middot; Best Value</span>
+                </span>
+                <span class="fp-pack-right">
+                  <strong>$82.00</strong>
+                  <span>Save 38%</span>
+                </span>
+              </button>
+            </div>
+            <div class="fp-total-row">
+              <span>Total</span>
+              <strong data-live-total>$34.00</strong>
+            </div>
+            <a href="{{ routes.all_products_collection_url }}" class="fp-add-btn fp-add-link">Shop Collection &rarr;</a>
           </div>
         {% endif %}
+
+        <!-- Expandable Accordions -->
+        <div class="fp-accordions">
+          <details class="fp-acc-item" open>
+            <summary class="fp-acc-trigger">Benefits &amp; Overview</summary>
+            <ul class="fp-acc-list">
+              <li>Volume: 15 ml / 0.5 fl oz compact jar &amp; travel tube</li>
+              <li>Texture: Silky, non-greasy cushion cream</li>
+              <li>Routine: Suitable for morning and evening skincare</li>
+            </ul>
+          </details>
+          <details class="fp-acc-item">
+            <summary class="fp-acc-trigger">How to Use</summary>
+            <ol class="fp-acc-steps">
+              <li>Dispense a pea-sized amount onto your ring finger after cleansing and toning.</li>
+              <li>Gently tap along the orbital bone from the inner corner outward without tugging.</li>
+              <li>Allow 60 seconds to absorb before layering moisturizer or sunscreen.</li>
+            </ol>
+          </details>
+        </div>
       </div>
     </div>
-  </div>
+  </section>
 
-  <!-- Before & After Section -->
+  <!-- SECTION 2: See It In Action Application Walkthrough -->
+  <section class="fp-walkthrough">
+    <div class="fp-walk-container">
+      <div class="fp-walk-head">
+        <h2 class="fp-serif-center">See It In Action</h2>
+        <p class="fp-muted-center">{{ section.settings.video_title | escape }}</p>
+      </div>
+      <div class="fp-walk-grid">
+        <div class="fp-reel-box">
+          <img src="{{ img2_url }}" width="720" height="1280" alt="{{ display_title | escape }} poster" class="fp-reel-bg" loading="lazy">
+          {% if section.settings.shopify_video != blank %}
+            {{ section.settings.shopify_video | video_tag: autoplay: true, loop: true, muted: true, playsinline: true, class: 'fp-reel-fg' }}
+          {% elsif section.settings.mp4_url != blank %}
+            <video class="fp-reel-fg" poster="{{ img2_url }}" autoplay loop muted playsinline preload="metadata">
+              <source src="{{ section.settings.mp4_url }}" type="video/mp4">
+            </video>
+          {% else %}
+            <img src="{{ reel_url }}" data-reel-src="{{ reel_url }}" data-poster-src="{{ img2_url }}" width="360" height="640" alt="{{ display_title | escape }} demonstration" class="fp-reel-fg" loading="lazy">
+          {% endif %}
+          <div class="fp-reel-scrim"></div>
+          <div class="fp-reel-top">
+            <button type="button" class="fp-reel-btn" data-walk-play aria-label="Pause or play demonstration">Pause</button>
+          </div>
+          <div class="fp-reel-caption">
+            <p class="fp-reel-step-caption" data-walk-caption>01 &middot; Gentle ring-finger application</p>
+            <p class="fp-reel-title">{{ display_title | escape }}</p>
+          </div>
+        </div>
+
+        <div class="fp-walk-copy">
+          <p class="fp-eyebrow">APPLICATION WALKTHROUGH</p>
+          <h3 class="fp-serif">{{ section.settings.ritual_heading | escape }}</h3>
+          <p class="fp-muted">{{ section.settings.fallback_description | escape }}</p>
+          <div class="fp-step-tabs">
+            <button type="button" class="fp-step-tab is-active" data-step-caption="01 &middot; Gentle ring-finger application">
+              <span class="fp-step-label">Step 1</span>
+              <span class="fp-step-text">Gentle ring-finger application</span>
+            </button>
+            <button type="button" class="fp-step-tab" data-step-caption="02 &middot; Rich, fast-absorbing peptide texture">
+              <span class="fp-step-label">Step 2</span>
+              <span class="fp-step-text">Rich, fast-absorbing peptide texture</span>
+            </button>
+            <button type="button" class="fp-step-tab" data-step-caption="03 &middot; Daily morning &amp; evening ritual">
+              <span class="fp-step-label">Step 3</span>
+              <span class="fp-step-text">Daily morning &amp; evening ritual</span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SECTION 3: Before & After Interactive Slider -->
   <section class="fp-comparison">
     <div class="fp-container fp-split">
       <div>
         <span class="fp-eyebrow">{{ section.settings.compare_eyebrow | escape }}</span>
         <h2 class="fp-serif">{{ section.settings.compare_heading | escape }}</h2>
         <p class="fp-muted">{{ section.settings.compare_copy | escape }}</p>
-        <a href="#FabForm" class="fp-shop-link">Shop this product &rarr;</a>
+        <a href="#fp-buy-box-{{ section.id }}" class="fp-shop-link">Shop this product &rarr;</a>
       </div>
-      <div class="fp-ba-box">
-        {% if section.settings.before_image != blank %}
-          {{ section.settings.before_image | image_url: width: 900 | image_tag: class: 'fp-ba-img', alt: 'Before' }}
-        {% else %}
-          <img src="{{ 'product_eye_cream.jpg' | asset_url }}" width="800" height="600" alt="Product Prep" class="fp-ba-img">
-        {% endif %}
-        {% if section.settings.after_image != blank %}
-          {{ section.settings.after_image | image_url: width: 900 | image_tag: class: 'fp-ba-img', alt: 'After' }}
-        {% else %}
-          <img src="{{ 'editorial_eye_ritual.jpg' | asset_url }}" width="800" height="600" alt="In Routine" class="fp-ba-img">
-        {% endif %}
+      <div>
+        <div class="fp-ba-slider-box">
+          {% if section.settings.after_image != blank %}
+            {{ section.settings.after_image | image_url: width: 900 | image_tag: class: 'fp-ba-full', alt: 'In Routine' }}
+          {% else %}
+            <img src="{{ img3_url }}" width="800" height="600" alt="In Routine" class="fp-ba-full" loading="lazy">
+          {% endif %}
+          <div class="fp-ba-overlay" data-ba-overlay>
+            {% if section.settings.before_image != blank %}
+              {{ section.settings.before_image | image_url: width: 900 | image_tag: class: 'fp-ba-full', alt: 'Product Prep' }}
+            {% else %}
+              <img src="{{ img1_url }}" width="800" height="600" alt="Product Prep" class="fp-ba-full" loading="lazy">
+            {% endif %}
+          </div>
+          <div class="fp-ba-divider" data-ba-divider></div>
+          <span class="fp-ba-tag fp-ba-left">Product Prep</span>
+          <span class="fp-ba-tag fp-ba-right">In Routine</span>
+        </div>
+        <input type="range" min="10" max="90" value="50" class="fp-ba-range" data-ba-range aria-label="Compare product preparation and routine view">
       </div>
     </div>
   </section>
 
-  <!-- Blue Wave Features Banner -->
-  <section class="fp-wave-banner">
-    <span class="fp-wave-eyebrow">THOUGHTFUL FORMULATION</span>
-    <h2 class="fp-wave-title">{{ section.settings.features_heading | escape }}</h2>
+  <!-- SECTION 4: Blue Wave Header + 4-Card Features Grid -->
+  <section class="fp-features-section">
+    <div class="fp-wave-banner">
+      <span class="fp-wave-eyebrow">THOUGHTFUL FORMULATION</span>
+      <h2 class="fp-wave-title">{{ section.settings.features_heading | escape }}</h2>
+      <svg viewBox="0 0 1440 60" preserveAspectRatio="none" class="fp-wave-svg" aria-hidden="true">
+        <path d="M0,32 C360,64 1080,0 1440,32 L1440,60 L0,60 Z"></path>
+      </svg>
+    </div>
+    <div class="fp-container fp-features-grid">
+      {% for block in section.blocks %}
+        {% if block.type == 'feature' %}
+          <div class="fp-feature-card" {{ block.shopify_attributes }}>
+            <span class="fp-step-badge">{{ forloop.index }}</span>
+            <h3>{{ block.settings.title | escape }}</h3>
+            <p>{{ block.settings.copy | escape }}</p>
+          </div>
+        {% endif %}
+      {% endfor %}
+    </div>
   </section>
-  <div class="fp-container fp-features-grid">
-    {% for block in section.blocks %}
-      {% if block.type == 'feature' %}
-        <div class="fp-feature-card" {{ block.shopify_attributes }}>
-          <span class="fp-step-badge">{{ forloop.index }}</span>
-          <h3>{{ block.settings.title | escape }}</h3>
-          <p>{{ block.settings.copy | escape }}</p>
-        </div>
-      {% endif %}
-    {% endfor %}
-  </div>
+
+  <!-- SECTION 5: Everyday Care Split Story 1 -->
+  <section class="fp-story-one">
+    <div class="fp-container fp-split">
+      <div>
+        <span class="fp-eyebrow">EVERYDAY CARE</span>
+        <h2 class="fp-serif">{{ section.settings.story_one_heading | escape }}</h2>
+        <p class="fp-muted">{{ section.settings.story_one_copy | escape }}</p>
+      </div>
+      <div class="fp-story-img-wrap">
+        <img src="{{ img1_url }}" width="800" height="600" alt="{{ display_title | escape }}" class="fp-story-img" loading="lazy">
+      </div>
+    </div>
+  </section>
+
+  <!-- SECTION 6: Simple 3-Step Ritual Split Story 2 -->
+  <section class="fp-story-two">
+    <div class="fp-container fp-split">
+      <div class="fp-story-img-wrap">
+        <img src="{{ img3_url }}" width="800" height="600" alt="{{ display_title | escape }} routine" class="fp-story-img" loading="lazy">
+      </div>
+      <div>
+        <span class="fp-eyebrow">SIMPLE 3-STEP RITUAL</span>
+        <h2 class="fp-serif">{{ section.settings.ritual_heading | escape }}</h2>
+        <ol class="fp-ritual-list">
+          <li><span class="fp-ritual-num">1</span><span>Start with clean, dry under-eye skin after your regular cleanser.</span></li>
+          <li><span class="fp-ritual-num">2</span><span>Tap a grain-of-rice amount gently from inner to outer corner.</span></li>
+          <li><span class="fp-ritual-num">3</span><span>Let the silky cream settle for 60 seconds before applying SPF or makeup.</span></li>
+        </ol>
+      </div>
+    </div>
+  </section>
+
+  <!-- SECTION 7: Complete Your Routine -->
+  <section class="fp-cross-sell">
+    <div class="fp-container">
+      <div class="fp-walk-head">
+        <span class="fp-eyebrow">COMPLETE YOUR ROUTINE</span>
+        <h2 class="fp-serif-center">A closer look at fabaddons essentials</h2>
+      </div>
+      <div class="fp-cross-grid">
+        {% for block in section.blocks %}
+          {% if block.type == 'routine_item' %}
+            {% assign cross_prod = block.settings.product %}
+            {% assign cross_url = cross_prod.url | default: routes.all_products_collection_url %}
+            <a href="{{ cross_url }}" class="fp-cross-card" {{ block.shopify_attributes }}>
+              <div class="fp-cross-media">
+                {% if cross_prod != blank and cross_prod.featured_image != blank %}
+                  {{ cross_prod.featured_image | image_url: width: 800 | image_tag: class: 'fp-cross-img', loading: 'lazy', alt: cross_prod.title }}
+                {% else %}
+                  <img src="{{ block.settings.fallback_asset | asset_url }}" width="800" height="600" alt="{{ block.settings.fallback_title | escape }}" class="fp-cross-img" loading="lazy">
+                {% endif %}
+              </div>
+              <div class="fp-cross-body">
+                <strong>{{ cross_prod.title | default: block.settings.fallback_title | escape }}</strong>
+                <span>
+                  {% if cross_prod != blank %}
+                    {{ cross_prod.price | money }}
+                  {% else %}
+                    {{ block.settings.fallback_price | escape }}
+                  {% endif %}
+                </span>
+              </div>
+            </a>
+          {% endif %}
+        {% endfor %}
+      </div>
+    </div>
+  </section>
 </div>
 
 <style>
-  #FabProduct-{{ section.id }} { background: #ffffff; color: #17212c; padding-bottom: 48px; }
+  #FabProduct-{{ section.id }} { background: #ffffff; color: #17212c; }
   #FabProduct-{{ section.id }} .fp-container { max-width: 1240px; margin: 0 auto; padding: 0 20px; }
-  #FabProduct-{{ section.id }} .fp-breadcrumb { padding: 20px 0 16px; font-size: 12px; color: #65717e; }
+  #FabProduct-{{ section.id }} .fp-top-bar { padding-top: 22px; padding-bottom: 16px; display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px; font-size: 12px; color: #65717e; }
+  #FabProduct-{{ section.id }} .fp-breadcrumb { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
   #FabProduct-{{ section.id }} .fp-breadcrumb a { color: inherit; text-decoration: none; }
-  #FabProduct-{{ section.id }} .fp-main { display: grid; grid-template-columns: 1.08fr 0.92fr; gap: 48px; align-items: start; padding-bottom: 56px; }
-  #FabProduct-{{ section.id }} .fp-stage { aspect-ratio: 1 / 1; background: #f6f7f9; border: 1px solid #e3e8ed; border-radius: 16px; overflow: hidden; }
+  #FabProduct-{{ section.id }} .fp-crumb-current { color: #17212c; font-weight: 600; }
+  #FabProduct-{{ section.id }} .fp-back-link { color: #145592; font-weight: 600; text-decoration: none; }
+
+  #FabProduct-{{ section.id }} .fp-buy-section { padding-bottom: 64px; }
+  #FabProduct-{{ section.id }} .fp-main { display: grid; grid-template-columns: 1.08fr 0.92fr; gap: 48px; align-items: start; }
+  #FabProduct-{{ section.id }} .fp-gallery-col { position: sticky; top: 96px; }
+  #FabProduct-{{ section.id }} .fp-stage { position: relative; aspect-ratio: 1 / 1; background: #f6f7f9; border: 1px solid #e3e8ed; border-radius: 16px; overflow: hidden; box-shadow: 0 18px 48px rgba(20,55,85,0.08); }
   #FabProduct-{{ section.id }} .fp-main-img { width: 100%; height: 100%; object-fit: cover; display: block; }
-  #FabProduct-{{ section.id }} .fp-thumbs { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-top: 12px; }
-  #FabProduct-{{ section.id }} .fp-thumb { border: 1px solid #e3e8ed; border-radius: 10px; overflow: hidden; padding: 0; background: #f5f6f8; cursor: pointer; aspect-ratio: 4 / 3; }
+  #FabProduct-{{ section.id }} .fp-gal-arrow { position: absolute; top: 50%; transform: translateY(-50%); width: 40px; height: 40px; border-radius: 9999px; border: 0; background: rgba(255,255,255,0.92); color: #17212c; font-size: 20px; cursor: pointer; display: grid; place-items: center; box-shadow: 0 4px 12px rgba(0,0,0,0.08); }
+  #FabProduct-{{ section.id }} .fp-gal-prev { left: 12px; }
+  #FabProduct-{{ section.id }} .fp-gal-next { right: 12px; }
+  #FabProduct-{{ section.id }} .fp-thumbs { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-top: 14px; }
+  #FabProduct-{{ section.id }} .fp-thumb { border: 2px solid transparent; border-radius: 12px; overflow: hidden; padding: 0; background: #f5f6f8; cursor: pointer; aspect-ratio: 4 / 3; opacity: 0.75; }
+  #FabProduct-{{ section.id }} .fp-thumb.is-active { border-color: #145592; opacity: 1; }
   #FabProduct-{{ section.id }} .fp-thumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
-  #FabProduct-{{ section.id }} .fp-tagline { display: inline-block; padding: 5px 12px; border-radius: 6px; background: #f0f5fa; border: 1px solid #e3e8ed; color: #145592; font-size: 12px; font-weight: 600; margin-bottom: 12px; }
-  #FabProduct-{{ section.id }} .fp-title { font-size: clamp(26px, 2.8vw, 36px); font-weight: 700; margin: 0 0 12px; }
-  #FabProduct-{{ section.id }} .fp-price-line { display: flex; gap: 10px; align-items: baseline; font-size: 22px; font-weight: 700; color: #145592; margin-bottom: 16px; }
-  #FabProduct-{{ section.id }} .fp-price-line s { color: #65717e; font-size: 16px; font-weight: 400; }
+
+  #FabProduct-{{ section.id }} .fp-tagline { display: inline-block; padding: 5px 12px; border-radius: 6px; background: #f0f5fa; border: 1px solid #e3e8ed; color: #145592; font-size: 12px; font-weight: 600; margin-bottom: 14px; }
+  #FabProduct-{{ section.id }} .fp-title { font-size: clamp(28px, 3vw, 36px); font-weight: 700; margin: 0; line-height: 1.15; letter-spacing: -0.02em; }
+  #FabProduct-{{ section.id }} .fp-subtitle { margin: 8px 0 14px; font-size: 14px; color: #65717e; }
+  #FabProduct-{{ section.id }} .fp-price-line { display: flex; gap: 10px; align-items: baseline; margin-bottom: 16px; font-variant-numeric: tabular-nums; }
+  #FabProduct-{{ section.id }} .fp-price { font-size: 24px; font-weight: 700; color: #145592; }
+  #FabProduct-{{ section.id }} .fp-compare { color: #65717e; font-size: 16px; }
+  #FabProduct-{{ section.id }} .fp-save-pill { font-size: 12px; font-weight: 700; color: #145592; }
   #FabProduct-{{ section.id }} .fp-desc { font-size: 14px; line-height: 1.65; color: #65717e; margin-bottom: 20px; }
+  #FabProduct-{{ section.id }} .fp-qty-heading { font-size: 12px; font-weight: 700; margin: 0 0 10px; }
   #FabProduct-{{ section.id }} .fp-packs { display: flex; flex-direction: column; gap: 10px; margin-bottom: 16px; }
-  #FabProduct-{{ section.id }} .fp-pack { display: flex; align-items: center; justify-content: space-between; padding: 14px 16px; border: 1px solid #e3e8ed; border-radius: 12px; cursor: pointer; }
-  #FabProduct-{{ section.id }} .fp-add-btn { width: 100%; padding: 15px 24px; border-radius: 12px; border: 0; background: #111827; color: #ffffff; font-size: 14px; font-weight: 600; cursor: pointer; }
+  #FabProduct-{{ section.id }} .fp-pack { width: 100%; display: flex; align-items: center; justify-content: space-between; padding: 14px 16px; border: 1px solid #e3e8ed; border-radius: 12px; background: #ffffff; cursor: pointer; text-align: left; }
+  #FabProduct-{{ section.id }} .fp-pack.is-selected { border-color: #145592; background: #f0f5fa; }
+  #FabProduct-{{ section.id }} .fp-pack-left { display: flex; align-items: center; gap: 10px; font-size: 14px; color: #17212c; }
+  #FabProduct-{{ section.id }} .fp-radio-dot { width: 16px; height: 16px; border-radius: 9999px; border: 1px solid #cbd5e1; position: relative; flex-shrink: 0; }
+  #FabProduct-{{ section.id }} .fp-pack.is-selected .fp-radio-dot { border-color: #145592; }
+  #FabProduct-{{ section.id }} .fp-pack.is-selected .fp-radio-dot::after { content: ""; position: absolute; inset: 3px; border-radius: 9999px; background: #145592; }
+  #FabProduct-{{ section.id }} .fp-pack-badge { font-size: 11px; font-weight: 600; color: #145592; }
+  #FabProduct-{{ section.id }} .fp-pack-right { text-align: right; font-variant-numeric: tabular-nums; }
+  #FabProduct-{{ section.id }} .fp-pack-right strong { display: block; font-size: 14px; color: #17212c; }
+  #FabProduct-{{ section.id }} .fp-pack-right span { display: block; font-size: 11px; font-weight: 600; color: #145592; }
+  #FabProduct-{{ section.id }} .fp-total-row { display: flex; justify-content: space-between; align-items: center; padding: 6px 4px 12px; font-size: 14px; color: #65717e; }
+  #FabProduct-{{ section.id }} .fp-total-row strong { font-size: 18px; color: #17212c; }
+  #FabProduct-{{ section.id }} .fp-add-btn { width: 100%; padding: 15px 24px; border-radius: 12px; border: 0; background: #111827; color: #ffffff; font-size: 14px; font-weight: 600; cursor: pointer; display: block; text-align: center; text-decoration: none; }
+  #FabProduct-{{ section.id }} .fp-add-btn:hover { background: #145592; }
+
+  #FabProduct-{{ section.id }} .fp-accordions { border-top: 1px solid #e3e8ed; margin-top: 22px; }
+  #FabProduct-{{ section.id }} .fp-acc-item { border-bottom: 1px solid #e3e8ed; }
+  #FabProduct-{{ section.id }} .fp-acc-trigger { list-style: none; padding: 14px 0; font-size: 14px; font-weight: 600; cursor: pointer; display: flex; justify-content: space-between; align-items: center; }
+  #FabProduct-{{ section.id }} .fp-acc-trigger::after { content: "+"; color: #145592; font-size: 18px; }
+  #FabProduct-{{ section.id }} .fp-acc-item[open] .fp-acc-trigger::after { content: "−"; }
+  #FabProduct-{{ section.id }} .fp-acc-list,
+  #FabProduct-{{ section.id }} .fp-acc-steps { margin: 0 0 16px; padding-left: 18px; font-size: 13px; color: #65717e; line-height: 1.7; }
+
+  #FabProduct-{{ section.id }} .fp-walkthrough { padding: 60px 20px; border-top: 1px solid #e3e8ed; }
+  #FabProduct-{{ section.id }} .fp-walk-container { max-width: 1040px; margin: 0 auto; }
+  #FabProduct-{{ section.id }} .fp-walk-head { text-align: center; margin-bottom: 36px; }
+  #FabProduct-{{ section.id }} .fp-serif-center { font-family: Georgia, "Times New Roman", serif; font-size: clamp(28px, 3.6vw, 36px); font-weight: 600; margin: 0; }
+  #FabProduct-{{ section.id }} .fp-muted-center { font-size: 14px; color: #65717e; margin: 8px 0 0; }
+  #FabProduct-{{ section.id }} .fp-walk-grid { display: grid; grid-template-columns: 300px 1fr; gap: 36px; align-items: center; }
+  #FabProduct-{{ section.id }} .fp-reel-box { position: relative; aspect-ratio: 9 / 16; border-radius: 16px; overflow: hidden; background: #111827; border: 1px solid #e3e8ed; }
+  #FabProduct-{{ section.id }} .fp-reel-bg { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; z-index: 1; }
+  #FabProduct-{{ section.id }} .fp-reel-fg { position: relative; z-index: 2; width: 100%; height: 100%; object-fit: cover; display: block; }
+  #FabProduct-{{ section.id }} .fp-reel-scrim { position: absolute; inset: 0; z-index: 3; background: linear-gradient(to bottom, rgba(0,0,0,0.4), transparent 45%, rgba(0,0,0,0.75)); pointer-events: none; }
+  #FabProduct-{{ section.id }} .fp-reel-top { position: absolute; top: 12px; left: 12px; z-index: 4; }
+  #FabProduct-{{ section.id }} .fp-reel-btn { background: rgba(0,0,0,0.65); color: #ffffff; border: 0; border-radius: 9999px; padding: 6px 12px; font-size: 11px; font-weight: 600; cursor: pointer; }
+  #FabProduct-{{ section.id }} .fp-reel-caption { position: absolute; bottom: 14px; left: 14px; right: 14px; z-index: 4; color: #ffffff; }
+  #FabProduct-{{ section.id }} .fp-reel-step-caption { margin: 0 0 4px; font-size: 11px; opacity: 0.9; }
+  #FabProduct-{{ section.id }} .fp-reel-title { margin: 0; font-size: 12px; font-weight: 600; }
+  #FabProduct-{{ section.id }} .fp-step-tabs { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-top: 20px; }
+  #FabProduct-{{ section.id }} .fp-step-tab { border: 1px solid #e3e8ed; background: #ffffff; border-radius: 12px; padding: 12px; text-align: left; cursor: pointer; }
+  #FabProduct-{{ section.id }} .fp-step-tab.is-active { border-color: #145592; background: #f0f5fa; }
+  #FabProduct-{{ section.id }} .fp-step-label { display: block; font-size: 11px; font-weight: 700; color: #145592; }
+  #FabProduct-{{ section.id }} .fp-step-text { display: block; font-size: 12px; font-weight: 600; color: #17212c; margin-top: 4px; }
+
   #FabProduct-{{ section.id }} .fp-comparison { background: #f4f7fa; border-top: 1px solid #e3e8ed; border-bottom: 1px solid #e3e8ed; padding: 64px 0; }
   #FabProduct-{{ section.id }} .fp-split { display: grid; grid-template-columns: 1fr 1fr; gap: 40px; align-items: center; }
-  #FabProduct-{{ section.id }} .fp-eyebrow { font-size: 11px; font-weight: 700; letter-spacing: 0.16em; color: #145592; display: block; margin-bottom: 8px; }
-  #FabProduct-{{ section.id }} .fp-serif { font-family: Georgia, "Times New Roman", serif; font-size: clamp(28px, 3.5vw, 38px); margin: 0 0 12px; }
+  #FabProduct-{{ section.id }} .fp-eyebrow { font-size: 11px; font-weight: 700; letter-spacing: 0.16em; color: #145592; display: block; margin-bottom: 8px; text-transform: uppercase; }
+  #FabProduct-{{ section.id }} .fp-serif { font-family: Georgia, "Times New Roman", serif; font-size: clamp(28px, 3.5vw, 38px); margin: 0 0 12px; line-height: 1.15; }
   #FabProduct-{{ section.id }} .fp-muted { font-size: 15px; line-height: 1.65; color: #65717e; }
   #FabProduct-{{ section.id }} .fp-shop-link { display: inline-block; margin-top: 12px; font-size: 14px; font-weight: 600; color: #145592; text-decoration: none; }
-  #FabProduct-{{ section.id }} .fp-ba-box { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-  #FabProduct-{{ section.id }} .fp-ba-img { width: 100%; border-radius: 12px; border: 1px solid #e3e8ed; aspect-ratio: 4 / 3; object-fit: cover; }
-  #FabProduct-{{ section.id }} .fp-wave-banner { background: #145592; color: #ffffff; text-align: center; padding: 52px 20px; }
-  #FabProduct-{{ section.id }} .fp-wave-eyebrow { font-size: 11px; font-weight: 700; letter-spacing: 0.18em; opacity: 0.8; display: block; margin-bottom: 8px; }
+  #FabProduct-{{ section.id }} .fp-ba-slider-box { position: relative; aspect-ratio: 4 / 3; border-radius: 16px; overflow: hidden; border: 1px solid #e3e8ed; background: #ffffff; }
+  #FabProduct-{{ section.id }} .fp-ba-full { width: 100%; height: 100%; object-fit: cover; display: block; }
+  #FabProduct-{{ section.id }} .fp-ba-overlay { position: absolute; inset: 0; clip-path: inset(0 50% 0 0); }
+  #FabProduct-{{ section.id }} .fp-ba-divider { position: absolute; top: 0; bottom: 0; left: 50%; width: 2px; background: #ffffff; box-shadow: 0 0 6px rgba(0,0,0,0.3); }
+  #FabProduct-{{ section.id }} .fp-ba-tag { position: absolute; top: 12px; padding: 4px 10px; border-radius: 6px; font-size: 11px; font-weight: 600; color: #ffffff; }
+  #FabProduct-{{ section.id }} .fp-ba-left { left: 12px; background: rgba(0,0,0,0.65); }
+  #FabProduct-{{ section.id }} .fp-ba-right { right: 12px; background: rgba(20,85,146,0.92); }
+  #FabProduct-{{ section.id }} .fp-ba-range { width: 100%; margin-top: 12px; accent-color: #145592; cursor: pointer; }
+
+  #FabProduct-{{ section.id }} .fp-wave-banner { position: relative; background: #145592; color: #ffffff; text-align: center; padding: 56px 20px 68px; overflow: hidden; }
+  #FabProduct-{{ section.id }} .fp-wave-eyebrow { font-size: 11px; font-weight: 700; letter-spacing: 0.18em; opacity: 0.85; display: block; margin-bottom: 8px; }
   #FabProduct-{{ section.id }} .fp-wave-title { font-family: Georgia, "Times New Roman", serif; font-size: clamp(26px, 3.5vw, 38px); margin: 0; }
-  #FabProduct-{{ section.id }} .fp-features-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; padding-top: 40px; }
+  #FabProduct-{{ section.id }} .fp-wave-svg { position: absolute; bottom: 0; left: 0; width: 100%; height: 32px; fill: #ffffff; display: block; }
+  #FabProduct-{{ section.id }} .fp-features-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; padding-top: 44px; padding-bottom: 52px; }
   #FabProduct-{{ section.id }} .fp-feature-card { border: 1px solid #e3e8ed; border-radius: 12px; background: #f8fafc; padding: 22px; }
+  #FabProduct-{{ section.id }} .fp-feature-card h3 { margin: 0 0 8px; font-size: 15px; font-weight: 600; }
+  #FabProduct-{{ section.id }} .fp-feature-card p { margin: 0; font-size: 13px; color: #65717e; line-height: 1.6; }
   #FabProduct-{{ section.id }} .fp-step-badge { display: inline-grid; place-items: center; width: 28px; height: 28px; border-radius: 9999px; background: #145592; color: #ffffff; font-size: 12px; font-weight: 700; margin-bottom: 10px; }
+
+  #FabProduct-{{ section.id }} .fp-story-one { padding: 56px 0; background: #ffffff; }
+  #FabProduct-{{ section.id }} .fp-story-two { padding: 60px 0; background: #f4f7fa; border-top: 1px solid #e3e8ed; border-bottom: 1px solid #e3e8ed; }
+  #FabProduct-{{ section.id }} .fp-story-img-wrap { aspect-ratio: 4 / 3; border-radius: 16px; overflow: hidden; border: 1px solid #e3e8ed; }
+  #FabProduct-{{ section.id }} .fp-story-img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  #FabProduct-{{ section.id }} .fp-ritual-list { list-style: none; margin: 18px 0 0; padding: 0; display: flex; flex-direction: column; gap: 12px; }
+  #FabProduct-{{ section.id }} .fp-ritual-list li { display: flex; align-items: flex-start; gap: 12px; background: #ffffff; padding: 14px 16px; border-radius: 12px; border: 1px solid #e3e8ed; font-size: 14px; line-height: 1.6; }
+  #FabProduct-{{ section.id }} .fp-ritual-num { width: 28px; height: 28px; border-radius: 9999px; background: #145592; color: #ffffff; font-size: 12px; font-weight: 700; display: inline-grid; place-items: center; flex-shrink: 0; }
+
+  #FabProduct-{{ section.id }} .fp-cross-sell { padding: 60px 0; background: #ffffff; }
+  #FabProduct-{{ section.id }} .fp-cross-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 22px; }
+  #FabProduct-{{ section.id }} .fp-cross-card { border: 1px solid #e3e8ed; border-radius: 12px; overflow: hidden; text-decoration: none; color: inherit; background: #ffffff; display: block; }
+  #FabProduct-{{ section.id }} .fp-cross-media { aspect-ratio: 4 / 3; background: #f6f7f9; overflow: hidden; }
+  #FabProduct-{{ section.id }} .fp-cross-img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  #FabProduct-{{ section.id }} .fp-cross-body { padding: 14px 16px; display: flex; align-items: center; justify-content: space-between; gap: 10px; font-size: 14px; }
+  #FabProduct-{{ section.id }} .fp-cross-body span { font-weight: 600; color: #145592; flex-shrink: 0; }
+
   @media (max-width: 900px) {
+    #FabProduct-{{ section.id }} .fp-gallery-col { position: static; }
     #FabProduct-{{ section.id }} .fp-main,
+    #FabProduct-{{ section.id }} .fp-walk-grid,
     #FabProduct-{{ section.id }} .fp-split,
-    #FabProduct-{{ section.id }} .fp-features-grid { grid-template-columns: 1fr; }
+    #FabProduct-{{ section.id }} .fp-features-grid,
+    #FabProduct-{{ section.id }} .fp-cross-grid,
+    #FabProduct-{{ section.id }} .fp-step-tabs { grid-template-columns: 1fr; }
   }
 </style>
+
+<script>
+  (() => {
+    const root = document.getElementById('FabProduct-{{ section.id }}');
+    if (!root) return;
+
+    const mainImg = document.getElementById('fpMainImg-{{ section.id }}');
+    const thumbs = Array.from(root.querySelectorAll('[data-gal-thumb]'));
+    let galIdx = 0;
+    const setSlide = (nextIdx) => {
+      if (!thumbs.length || !mainImg) return;
+      galIdx = (nextIdx + thumbs.length) % thumbs.length;
+      const active = thumbs[galIdx];
+      if (active.dataset.galSrc) mainImg.src = active.dataset.galSrc;
+      thumbs.forEach((btn, i) => btn.classList.toggle('is-active', i === galIdx));
+    };
+    thumbs.forEach((btn, i) => btn.addEventListener('click', () => setSlide(i)));
+    root.querySelector('[data-gal-prev]')?.addEventListener('click', () => setSlide(galIdx - 1));
+    root.querySelector('[data-gal-next]')?.addEventListener('click', () => setSlide(galIdx + 1));
+
+    const qtyInput = root.querySelector('[data-qty-input]');
+    const livePrice = root.querySelector('[data-live-price]');
+    const liveCompare = root.querySelector('[data-live-compare]');
+    const liveSave = root.querySelector('[data-live-save]');
+    const liveTotal = root.querySelector('[data-live-total]');
+    const packBtns = Array.from(root.querySelectorAll('[data-pack-qty]'));
+    packBtns.forEach((btn) => {
+      btn.addEventListener('click', () => {
+        packBtns.forEach((b) => b.classList.remove('is-selected'));
+        btn.classList.add('is-selected');
+        if (qtyInput) qtyInput.value = btn.dataset.packQty || '1';
+        if (livePrice && btn.dataset.packPrice) livePrice.textContent = btn.dataset.packPrice;
+        if (liveCompare && btn.dataset.packCompare) liveCompare.textContent = btn.dataset.packCompare;
+        if (liveSave && btn.dataset.packSave) liveSave.textContent = btn.dataset.packSave;
+        if (liveTotal && btn.dataset.packPrice) liveTotal.textContent = btn.dataset.packPrice;
+      });
+    });
+
+    const stepTabs = Array.from(root.querySelectorAll('[data-step-caption]'));
+    const captionEl = root.querySelector('[data-walk-caption]');
+    stepTabs.forEach((tab) => {
+      tab.addEventListener('click', () => {
+        stepTabs.forEach((t) => t.classList.remove('is-active'));
+        tab.classList.add('is-active');
+        if (captionEl && tab.dataset.stepCaption) captionEl.textContent = tab.dataset.stepCaption;
+      });
+    });
+
+    const playBtn = root.querySelector('[data-walk-play]');
+    const walkVideo = root.querySelector('.fp-walkthrough video');
+    const walkReel = root.querySelector('.fp-walkthrough img[data-reel-src]');
+    let paused = false;
+    playBtn?.addEventListener('click', () => {
+      if (walkVideo) {
+        if (walkVideo.paused) { walkVideo.play(); playBtn.textContent = 'Pause'; }
+        else { walkVideo.pause(); playBtn.textContent = 'Play'; }
+        return;
+      }
+      if (walkReel) {
+        paused = !paused;
+        const src = paused ? walkReel.dataset.posterSrc : walkReel.dataset.reelSrc;
+        if (src) walkReel.src = src;
+        playBtn.textContent = paused ? 'Play' : 'Pause';
+      }
+    });
+
+    const range = root.querySelector('[data-ba-range]');
+    const overlay = root.querySelector('[data-ba-overlay]');
+    const divider = root.querySelector('[data-ba-divider]');
+    range?.addEventListener('input', () => {
+      const val = Number(range.value) || 50;
+      if (overlay) overlay.style.clipPath = `inset(0 ${100 - val}% 0 0)`;
+      if (divider) divider.style.left = `${val}%`;
+    });
+  })();
+</script>
 
 {% schema %}
 {
   "name": "fabaddons Product",
   "settings": [
-    { "type": "text", "id": "tagline", "label": "Product tagline", "default": "Daily Targeted Care" },
+    { "type": "text", "id": "fallback_title", "label": "Fallback title", "default": "Dr. Melaxin Eyephalt Eye Cream" },
+    { "type": "text", "id": "tagline", "label": "Product tagline", "default": "Daily Targeted Under-Eye Care" },
+    { "type": "text", "id": "subtitle", "label": "Product subtitle", "default": "Korean targeted under-eye firming cream" },
+    { "type": "textarea", "id": "fallback_description", "label": "Fallback description", "default": "Formulated in Korea for delicate under-eye skin, Dr. Melaxin Eyephalt Eye Cream delivers concentrated hydration and a smooth, cushioned finish that wears comfortably beneath daytime SPF or makeup." },
+    { "type": "text", "id": "fallback_reel_asset", "label": "Bundled reel asset", "default": "demo_eye_cream.webp" },
+    { "type": "video", "id": "shopify_video", "label": "Shopify hosted video" },
+    { "type": "url", "id": "mp4_url", "label": "MP4 video URL (optional)" },
+    { "type": "text", "id": "video_title", "label": "Walkthrough subtitle", "default": "Under-Eye Application & Texture" },
     { "type": "text", "id": "compare_eyebrow", "label": "Comparison eyebrow", "default": "DAILY CONSISTENCY" },
     { "type": "text", "id": "compare_heading", "label": "Comparison heading", "default": "Before & after" },
-    { "type": "textarea", "id": "compare_copy", "label": "Comparison description", "default": "Gentle daily application supports comfort, hydration, and clean prep." },
+    { "type": "textarea", "id": "compare_copy", "label": "Comparison description", "default": "Slide to compare packaging prep and real skin/routine texture. Gentle daily application supports comfort, hydration, and clean prep without exaggerated claims." },
     { "type": "image_picker", "id": "before_image", "label": "Before image" },
     { "type": "image_picker", "id": "after_image", "label": "After image" },
-    { "type": "text", "id": "features_heading", "label": "Wave banner heading", "default": "Features for a fresher-looking routine" }
+    { "type": "text", "id": "features_heading", "label": "Wave banner heading", "default": "Features for a fresher-looking eye area" },
+    { "type": "text", "id": "story_one_heading", "label": "Everyday care heading", "default": "Simple care for your eye area" },
+    { "type": "textarea", "id": "story_one_copy", "label": "Everyday care copy", "default": "Designed to slot into a calm two-minute morning or evening ritual, the lightweight Korean cream absorbs without heaviness or white cast—leaving skin soft, comfortable, and prepped for the day." },
+    { "type": "text", "id": "ritual_heading", "label": "Ritual heading", "default": "Focused care. Practical design." }
   ],
   "blocks": [
     {
       "type": "feature",
       "name": "Feature Card",
       "settings": [
-        { "type": "text", "id": "title", "label": "Title", "default": "Smooth, cushioned finish" },
-        { "type": "textarea", "id": "copy", "label": "Description", "default": "Lightweight formula designed for comfortable everyday wear." }
+        { "type": "text", "id": "title", "label": "Title", "default": "Smoother-looking fine lines" },
+        { "type": "textarea", "id": "copy", "label": "Description", "default": "Cushions dry under-eye creases with lightweight moisture for a refined finish." }
+      ]
+    },
+    {
+      "type": "routine_item",
+      "name": "Routine Product",
+      "settings": [
+        { "type": "product", "id": "product", "label": "Select product" },
+        { "type": "text", "id": "fallback_asset", "label": "Fallback image asset", "default": "product_turmeric_pads.jpg" },
+        { "type": "text", "id": "fallback_title", "label": "Fallback title", "default": "Turmeric Acid Cleaning Pads" },
+        { "type": "text", "id": "fallback_price", "label": "Fallback price", "default": "$26.00" }
       ]
     }
   ],

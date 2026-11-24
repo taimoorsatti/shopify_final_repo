@@ -16,7 +16,7 @@
 
   <div class="fab-nav-bar">
     <div class="fab-nav-inner">
-      <a href="{{ routes.root_url }}" class="fab-logo">
+      <a href="{{ routes.root_url }}" data-fab-home-link class="fab-logo">
         {% if section.settings.logo != blank %}
           {{ section.settings.logo | image_url: width: 320 | image_tag: alt: shop.name, class: 'fab-logo-img' }}
         {% else %}
@@ -30,15 +30,19 @@
             <a href="{{ link.url }}" class="fab-nav-link">{{ link.title | escape }}</a>
           {% endfor %}
         {% else %}
-          <a href="{{ routes.root_url }}" class="fab-nav-link">Home</a>
-          <a href="{{ routes.all_products_collection_url }}" class="fab-nav-link">Shop</a>
-          <a href="{{ routes.root_url }}#bestsellers" class="fab-nav-link">Bestsellers</a>
-          <a href="{{ routes.root_url }}#see-it-in-action" class="fab-nav-link">See It In Action</a>
-          <a href="{{ routes.root_url }}#faq" class="fab-nav-link">FAQ</a>
+          <a href="{{ routes.root_url }}" data-fab-home-link class="fab-nav-link">Home</a>
+          <a href="{{ routes.root_url }}#bestsellers" data-fab-home-link data-fab-anchor="#bestsellers" class="fab-nav-link">Shop</a>
+          {% if section.settings.featured_product != blank %}
+            <a href="{{ section.settings.featured_product.url }}" class="fab-nav-link">Eye Cream</a>
+          {% else %}
+            <a href="{{ routes.root_url }}#fab-product=eye-cream" data-fab-product="eye-cream" class="fab-nav-link">Eye Cream</a>
+          {% endif %}
+          <a href="{{ routes.root_url }}#customer-opinions" data-fab-home-link data-fab-anchor="#customer-opinions" class="fab-nav-link">Reviews</a>
+          <a href="{{ routes.root_url }}#faq" data-fab-home-link data-fab-anchor="#faq" class="fab-nav-link">FAQ</a>
         {% endif %}
       </nav>
 
-      <a href="{{ routes.cart_url }}" class="fab-bag-btn" aria-label="Shopping bag">
+      <a href="{{ routes.cart_url }}" data-fab-open-bag class="fab-bag-btn" aria-label="Shopping bag">
         <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
         <span>Bag (<span data-cart-count>{{ cart.item_count }}</span>)</span>
       </a>
@@ -72,7 +76,8 @@
     { "type": "color", "id": "brand_color", "label": "Brand accent color", "default": "#145592" },
     { "type": "image_picker", "id": "logo", "label": "Logo image (optional)" },
     { "type": "text", "id": "logo_text", "label": "Logo text fallback", "default": "fabaddons" },
-    { "type": "link_list", "id": "menu", "label": "Header menu" }
+    { "type": "link_list", "id": "menu", "label": "Header menu" },
+    { "type": "product", "id": "featured_product", "label": "Eye Cream link product" }
   ],
   "presets": [{ "name": "fabaddons Header" }]
 }

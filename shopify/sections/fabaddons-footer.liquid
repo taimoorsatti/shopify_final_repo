@@ -27,19 +27,19 @@
                   <li><a href="{{ link.url }}">{{ link.title | escape }}</a></li>
                 {% endfor %}
               {% elsif forloop.index == 1 %}
-                <li><a href="{{ routes.root_url }}">Home</a></li>
-                <li><a href="{{ routes.all_products_collection_url }}">Shop All</a></li>
-                <li><a href="{{ routes.root_url }}#bestsellers">Bestsellers</a></li>
-                <li><a href="{{ routes.root_url }}#see-it-in-action">See It In Action</a></li>
+                <li><a href="{{ routes.root_url }}" data-fab-home-link>Home</a></li>
+                <li><a href="{{ routes.root_url }}#bestsellers" data-fab-home-link data-fab-anchor="#bestsellers">Shop Bestsellers</a></li>
+                <li><a href="{{ routes.cart_url }}" data-fab-open-bag>Shopping Bag</a></li>
+                <li><a href="{{ routes.root_url }}#see-it-in-action" data-fab-home-link data-fab-anchor="#see-it-in-action">See It In Action</a></li>
               {% elsif forloop.index == 2 %}
-                <li><a href="{{ routes.all_products_collection_url }}">Dr. Melaxin Eyephalt Eye Cream</a></li>
-                <li><a href="{{ routes.all_products_collection_url }}">Turmeric Acid Cleaning Pads</a></li>
-                <li><a href="{{ routes.all_products_collection_url }}">Dr. Melaxin Peel Shot Kojic Acid Spray</a></li>
-                <li><a href="{{ routes.all_products_collection_url }}">Anti Snore Mouth-Piece</a></li>
+                <li><a href="{{ routes.root_url }}#fab-product=eye-cream" data-fab-product="eye-cream">Eyephalt Eye Cream</a></li>
+                <li><a href="{{ routes.root_url }}#fab-product=turmeric-pads" data-fab-product="turmeric-pads">Turmeric Cleaning Pads</a></li>
+                <li><a href="{{ routes.root_url }}#fab-product=peel-spray" data-fab-product="peel-spray">Peel Shot Kojic Spray</a></li>
+                <li><a href="{{ routes.root_url }}#fab-product=anti-snore" data-fab-product="anti-snore">Anti Snore Mouth-Piece</a></li>
               {% else %}
-                <li><a href="{{ routes.root_url }}#customer-opinions">Customer Opinions</a></li>
-                <li><a href="{{ routes.root_url }}#faq">FAQ</a></li>
-                <li><a href="{{ routes.cart_url }}">Shopping Bag</a></li>
+                <li><a href="{{ routes.root_url }}#customer-opinions" data-fab-home-link data-fab-anchor="#customer-opinions">Customer Opinions</a></li>
+                <li><a href="{{ routes.root_url }}#faq" data-fab-home-link data-fab-anchor="#faq">FAQ</a></li>
+                <li><a href="{{ routes.cart_url }}" data-fab-open-bag>Shopping Bag</a></li>
               {% endif %}
             </ul>
           </div>
