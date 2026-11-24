@@ -1,197 +1,36 @@
 {
   "sections": {
-    "hero": {
-      "type": "fabaddons-hero",
-      "blocks": {
-        "slide_1": {
-          "type": "slide",
-          "settings": {
-            "fallback_asset": "hero_collection.jpg",
-            "eyebrow": "Beauty Essentials",
-            "heading": "Your daily beauty ritual.",
-            "subtext": "A little self-care. A quiet moment made just for you.",
-            "cta_label": "Discover Beauty"
-          }
-        },
-        "slide_2": {
-          "type": "slide",
-          "settings": {
-            "fallback_asset": "hero_wellness.jpg",
-            "eyebrow": "Smart Wellness",
-            "heading": "Less effort. More rest.",
-            "subtext": "Practical wellness solutions designed to make your nightly routine smoother.",
-            "cta_label": "Explore Wellness"
-          }
-        },
-        "slide_3": {
-          "type": "slide",
-          "settings": {
-            "fallback_asset": "hero_ritual.jpg",
-            "eyebrow": "Daily, Elevated",
-            "heading": "Simple upgrades. Everyday joy.",
-            "subtext": "Make room for your next everyday skincare favorite.",
-            "cta_label": "Shop Collection"
-          }
-        }
-      },
-      "block_order": ["slide_1", "slide_2", "slide_3"],
-      "settings": { "autoplay": true, "delay": 5 }
-    },
-    "benefits": {
-      "type": "fabaddons-benefits-marquee",
-      "blocks": {
-        "b1": { "type": "benefit", "settings": { "label": "3-Day Express Delivery" } },
-        "b2": { "type": "benefit", "settings": { "label": "Secure Checkout" } },
-        "b3": { "type": "benefit", "settings": { "label": "24/7 Customer Support" } },
-        "b4": { "type": "benefit", "settings": { "label": "Curated Daily Essentials" } }
-      },
-      "block_order": ["b1", "b2", "b3", "b4"],
-      "settings": {}
+    "main": {
+      "type": "fabaddons-faq",
+      "settings": {
+        "eyebrow": "404",
+        "heading": "Page not found",
+        "subtitle": "Return to the fabaddons homepage or shop our featured collection below.",
+        "contact_label": "View All Products"
+      }
     },
     "bestsellers": {
       "type": "fabaddons-bestselling-products",
       "blocks": {
-        "p1": {
-          "type": "product_card",
-          "settings": {
-            "fallback_asset": "product_eye_cream.jpg",
-            "fallback_title": "Dr. Melaxin Eyephalt Eye Cream",
-            "fallback_category": "Skincare",
-            "fallback_price": "$34.00",
-            "fallback_compare_price": "$44.00",
-            "fallback_discount": "Save 23%"
-          }
-        },
-        "p2": {
-          "type": "product_card",
-          "settings": {
-            "fallback_asset": "product_turmeric_pads.jpg",
-            "fallback_title": "Turmeric Acid Cleaning Pads",
-            "fallback_category": "Skincare",
-            "fallback_price": "$26.00",
-            "fallback_compare_price": "$34.00",
-            "fallback_discount": "Save 24%"
-          }
-        },
-        "p3": {
-          "type": "product_card",
-          "settings": {
-            "fallback_asset": "product_peel_spray.jpg",
-            "fallback_title": "Dr. Melaxin Peel Shot Kojic Acid Spray",
-            "fallback_category": "Skincare",
-            "fallback_price": "$38.00",
-            "fallback_compare_price": "$48.00",
-            "fallback_discount": "Save 21%"
-          }
-        },
-        "p4": {
-          "type": "product_card",
-          "settings": {
-            "fallback_asset": "product_sleep_mouthpiece.jpg",
-            "fallback_title": "Anti Snore Mouth-Piece",
-            "fallback_category": "Sleep Wellness",
-            "fallback_price": "$29.00",
-            "fallback_compare_price": "$39.00",
-            "fallback_discount": "Save 26%"
-          }
-        }
+        "p1": { "type": "product_card", "settings": { "fallback_asset": "product_eye_cream.jpg", "fallback_title": "Dr. Melaxin Eyephalt Eye Cream", "fallback_category": "Skincare", "fallback_price": "$34.00", "fallback_compare_price": "$44.00", "fallback_discount": "Save 23%" } },
+        "p2": { "type": "product_card", "settings": { "fallback_asset": "product_turmeric_pads.jpg", "fallback_title": "Turmeric Acid Cleaning Pads", "fallback_category": "Skincare", "fallback_price": "$26.00", "fallback_compare_price": "$34.00", "fallback_discount": "Save 24%" } },
+        "p3": { "type": "product_card", "settings": { "fallback_asset": "product_peel_spray.jpg", "fallback_title": "Dr. Melaxin Peel Shot Kojic Acid Spray", "fallback_category": "Skincare", "fallback_price": "$38.00", "fallback_compare_price": "$48.00", "fallback_discount": "Save 21%" } },
+        "p4": { "type": "product_card", "settings": { "fallback_asset": "product_sleep_mouthpiece.jpg", "fallback_title": "Anti Snore Mouth-Piece", "fallback_category": "Sleep Wellness", "fallback_price": "$29.00", "fallback_compare_price": "$39.00", "fallback_discount": "Save 26%" } }
       },
       "block_order": ["p1", "p2", "p3", "p4"],
-      "settings": {
-        "heading": "Bestselling Products",
-        "bg_color": "#FFFFFF",
-        "cta_label": "View All Products"
-      }
+      "settings": { "heading": "Bestselling Products", "bg_color": "#FFFFFF", "cta_label": "View All Products" }
     },
     "videos": {
       "type": "fabaddons-see-it-in-action",
       "blocks": {
-        "v1": {
-          "type": "video_card",
-          "settings": {
-            "custom_label": "Dr. Melaxin Eyephalt Eye Cream",
-            "fallback_price": "$34.00",
-            "fallback_video_asset": "demo_eye_cream.mp4",
-            "fallback_poster_asset": "video_eye_cream.jpg"
-          }
-        },
-        "v2": {
-          "type": "video_card",
-          "settings": {
-            "custom_label": "Turmeric Acid Cleaning Pads",
-            "fallback_price": "$26.00",
-            "fallback_video_asset": "demo_turmeric_pads.mp4",
-            "fallback_poster_asset": "video_turmeric_pads.jpg"
-          }
-        },
-        "v3": {
-          "type": "video_card",
-          "settings": {
-            "custom_label": "Dr. Melaxin Peel Shot Kojic Acid Spray",
-            "fallback_price": "$38.00",
-            "fallback_video_asset": "demo_peel_spray.mp4",
-            "fallback_poster_asset": "video_peel_spray.jpg"
-          }
-        },
-        "v4": {
-          "type": "video_card",
-          "settings": {
-            "custom_label": "Anti Snore Mouth-Piece",
-            "fallback_price": "$29.00",
-            "fallback_video_asset": "demo_sleep_mouthpiece.mp4",
-            "fallback_poster_asset": "video_sleep_mouthpiece.jpg"
-          }
-        }
+        "v1": { "type": "video_card", "settings": { "custom_label": "Dr. Melaxin Eyephalt Eye Cream", "fallback_price": "$34.00", "fallback_video_asset": "demo_eye_cream.mp4", "fallback_poster_asset": "video_eye_cream.jpg" } },
+        "v2": { "type": "video_card", "settings": { "custom_label": "Turmeric Acid Cleaning Pads", "fallback_price": "$26.00", "fallback_video_asset": "demo_turmeric_pads.mp4", "fallback_poster_asset": "video_turmeric_pads.jpg" } },
+        "v3": { "type": "video_card", "settings": { "custom_label": "Dr. Melaxin Peel Shot Kojic Acid Spray", "fallback_price": "$38.00", "fallback_video_asset": "demo_peel_spray.mp4", "fallback_poster_asset": "video_peel_spray.jpg" } },
+        "v4": { "type": "video_card", "settings": { "custom_label": "Anti Snore Mouth-Piece", "fallback_price": "$29.00", "fallback_video_asset": "demo_sleep_mouthpiece.mp4", "fallback_poster_asset": "video_sleep_mouthpiece.jpg" } }
       },
       "block_order": ["v1", "v2", "v3", "v4"],
-      "settings": {
-        "heading": "See It In Action",
-        "subtitle": "Discover your daily favorites."
-      }
-    },
-    "opinions": {
-      "type": "fabaddons-customer-opinions",
-      "settings": {
-        "bg_color": "#F4F7FA",
-        "eyebrow": "LOVED BY CUSTOMERS",
-        "heading": "Our Customers' Opinions",
-        "description": "Honest impressions from verified fabaddons shoppers. Real customer reviews appear here as orders are reviewed."
-      }
-    },
-    "why_shop": {
-      "type": "fabaddons-why-shop",
-      "blocks": {
-        "w1": { "type": "card", "settings": { "title": "Curated Finds", "copy": "Explore skincare and wellness essentials selected to bring ease to everyday routines." } },
-        "w2": { "type": "card", "settings": { "title": "Thoughtful Value", "copy": "Practical multi-pack pricing and straightforward essentials crafted for your budget." } },
-        "w3": { "type": "card", "settings": { "title": "Secure Checkout", "copy": "Complete your purchase through our encrypted, transparent checkout." } },
-        "w4": { "type": "card", "settings": { "title": "Here to Help", "copy": "Have a question about a product or order? Our support team is ready to help." } }
-      },
-      "block_order": ["w1", "w2", "w3", "w4"],
-      "settings": { "heading": "Why Shop With Us?" }
-    },
-    "faq": {
-      "type": "fabaddons-faq",
-      "blocks": {
-        "q1": { "type": "faq", "settings": { "question": "How long does shipping and delivery take?", "answer": "<p>Orders are processed within 24 hours on business days. Express delivery typically arrives within 3 business days.</p>" } },
-        "q2": { "type": "faq", "settings": { "question": "Are Dr. Melaxin products authentic and sealed?", "answer": "<p>Yes. Every skincare and wellness item stocked by fabaddons ships in original, sealed retail packaging.</p>" } },
-        "q3": { "type": "faq", "settings": { "question": "Can I bundle multiple packs in one order?", "answer": "<p>Yes. Use the Buy 2 or Buy 3 quantity options on any product page for multi-pack savings.</p>" } }
-      },
-      "block_order": ["q1", "q2", "q3"],
-      "settings": {
-        "eyebrow": "HERE TO HELP",
-        "heading": "Frequently Asked Questions",
-        "subtitle": "Helpful answers before you place your order.",
-        "contact_label": "View All Products"
-      }
+      "settings": { "heading": "See It In Action", "subtitle": "Discover your daily favorites." }
     }
   },
-  "order": [
-    "hero",
-    "benefits",
-    "bestsellers",
-    "videos",
-    "opinions",
-    "why_shop",
-    "faq"
-  ]
+  "order": ["main", "bestsellers", "videos"]
 }

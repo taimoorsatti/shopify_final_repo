@@ -1,9 +1,6 @@
 {
   "sections": {
-    "main": {
-      "type": "fabaddons-cart",
-      "settings": {}
-    }
+    "main": { "type": "fabaddons-faq", "settings": { "eyebrow": "SHOPPING BAG", "heading": "Your Shopping Bag", "subtitle": "Items added to your bag appear at checkout.", "contact_label": "View All Products" } }
   },
   "order": ["main"]
 }
