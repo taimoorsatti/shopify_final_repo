@@ -49,8 +49,8 @@ function buildZipBufferFromDirectory(dirPath: string): Buffer {
     localHeader.writeUInt16LE(20, 4);
     localHeader.writeUInt16LE(0x0800, 6);
     localHeader.writeUInt16LE(0, 8);
-    localHeader.writeUInt16LE(0x6000, 10); // Valid DOS time (12:00:00)
-    localHeader.writeUInt16LE(0x5a21, 12); // Valid DOS date (2025-01-01)
+    localHeader.writeUInt16LE(0, 10);
+    localHeader.writeUInt16LE(0, 12);
     localHeader.writeUInt32LE(crc, 14);
     localHeader.writeUInt32LE(dataBytes.length, 18);
     localHeader.writeUInt32LE(dataBytes.length, 22);
@@ -66,8 +66,8 @@ function buildZipBufferFromDirectory(dirPath: string): Buffer {
     centralHeader.writeUInt16LE(20, 6);
     centralHeader.writeUInt16LE(0x0800, 8);
     centralHeader.writeUInt16LE(0, 10);
-    centralHeader.writeUInt16LE(0x6000, 12);
-    centralHeader.writeUInt16LE(0x5a21, 14);
+    centralHeader.writeUInt16LE(0, 12);
+    centralHeader.writeUInt16LE(0, 14);
     centralHeader.writeUInt32LE(crc, 16);
     centralHeader.writeUInt32LE(dataBytes.length, 20);
     centralHeader.writeUInt32LE(dataBytes.length, 24);
